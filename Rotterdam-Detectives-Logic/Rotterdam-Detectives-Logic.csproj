@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>RotterdamDetectives_Logic</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Rotterdam-Detectives-DataInterface\Rotterdam-Detectives-DataInterface.csproj" />
+    <ProjectReference Include="..\Rotterdam-Detectives-LogicInterface\Rotterdam-Detectives-LogicInterface.csproj" />
+  </ItemGroup>
+
+</Project>

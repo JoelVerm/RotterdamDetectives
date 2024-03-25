@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Rotterdam-Detectives-Main": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53373;http://localhost:53374"
+    }
+  }
+}

@@ -1,17 +1,12 @@
-using RotterdamDetectives.Models;
+using RotterdamDetectives_Presentation.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace RotterdamDetectives.Controllers
+namespace RotterdamDetectives_Presentation.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        public HomeController() {}
 
         public IActionResult Index()
         {

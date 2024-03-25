@@ -1,4 +1,4 @@
-namespace RotterdamDetectives.Models
+namespace RotterdamDetectives_Presentation.Models
 {
     public class ErrorViewModel
     {

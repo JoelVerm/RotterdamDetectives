@@ -1,4 +1,4 @@
-using RotterdamDetectives.Controllers;
+using RotterdamDetectives_Presentation.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RotterdamDetectives_Test
@@ -10,7 +10,7 @@ namespace RotterdamDetectives_Test
         public void TestIndex()
         {
             // Arrange
-            var controller = new HomeController(new MockLogger<HomeController>());
+            var controller = new HomeController();
 
             // Act
             var result = controller.Index() as ViewResult;
