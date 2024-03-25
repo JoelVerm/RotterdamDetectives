@@ -22,6 +22,11 @@ namespace RotterdamDetectives_Data
             var playerData = DB.Rows("SELECT * FROM Players WHERE Name = @Name", new Data.Player { Name = name })?.First();
             if (playerData == null)
                 return null;
+            return ConvertPlayer(playerData);
+        }
+
+        Interface.Player ConvertPlayer(Data.Player playerData)
+        {
             var player = new Interface.Player { Name = playerData.Name, PasswordHash = playerData.PasswordHash, GameMode = playerData.GameMode };
             if (playerData.StationId != null)
                 player.Station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = playerData.StationId.Value })?.First();
@@ -133,6 +138,18 @@ namespace RotterdamDetectives_Data
             if (gameId == 0)
                 return false;
             return DB.Execute("UPDATE Players SET GameId = @GameId WHERE Name = @Name", new Data.Player { Name = playerName, GameId = gameId });
+        }
+
+        public IEnumerable<IPlayerData>? GetPlayersInGame(string organiserName)
+        {
+            int organiserId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = organiserName }) ?? 0;
+            if (organiserId == 0)
+                return null;
+            int gameId = DB.Field<Data.Game, int>("SELECT Id FROM Games WHERE OrganiserId = @OrganiserId", new Data.Game { OrganiserId = organiserId }) ?? 0;
+            if (gameId == 0)
+                return null;
+            var players = DB.Rows("SELECT * FROM Players WHERE GameId = @GameId", new Data.Player { GameId = gameId });
+            return players?.Select(ConvertPlayer);
         }
 
         public bool DeleteGame(string organiserName)

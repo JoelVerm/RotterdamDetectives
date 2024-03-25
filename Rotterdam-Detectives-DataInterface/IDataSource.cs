@@ -16,8 +16,9 @@
         public bool DisconnectStations(int from, int to);
         public bool DeleteStation(string name);
         public bool CreateGame(string organiserName);
-        public bool AddPlayerToGame(string playerName, string gameName);
-        public bool DeleteGame(string name);
+        public bool AddPlayerToGame(string playerName, string organiserName);
+        public IEnumerable<IPlayerData>? GetPlayersInGame(string organiserName);
+        public bool DeleteGame(string organiserName);
         public bool AddTransportType(string name, int maxTickets);
         public bool DeleteTransportType(string name);
         public bool AddTicket(string playerName, string transportType);
