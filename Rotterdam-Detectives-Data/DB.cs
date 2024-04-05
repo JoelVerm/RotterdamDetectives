@@ -74,7 +74,7 @@ namespace RotterdamDetectives_Data
             SqlCommand cmd = ConstructCommand(query, @params);
             try
             {
-                SqlDataReader reader = cmd.ExecuteReader();
+                using SqlDataReader reader = cmd.ExecuteReader();
                 List<Out> list = new();
                 foreach (DbDataRecord item in reader)
                 {

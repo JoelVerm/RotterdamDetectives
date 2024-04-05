@@ -19,7 +19,7 @@ namespace RotterdamDetectives_Data
         
         public IPlayerData? GetPlayerData(string name)
         {
-            var playerData = DB.Rows("SELECT * FROM Players WHERE Name = @Name", new Data.Player { Name = name })?.First();
+            var playerData = DB.Rows("SELECT * FROM Players WHERE Name = @Name", new Data.Player { Name = name })?.FirstOrDefault();
             if (playerData == null)
                 return null;
             return ConvertPlayer(playerData);
@@ -29,16 +29,12 @@ namespace RotterdamDetectives_Data
         {
             var player = new Interface.Player { Name = playerData.Name, PasswordHash = playerData.PasswordHash, GameMode = playerData.GameMode };
             if (playerData.StationId != null)
-                player.Station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = playerData.StationId.Value })?.First();
-            if (playerData.GameId != null)
+                player.Station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = playerData.StationId.Value })?.FirstOrDefault();
+            if (playerData.GameMasterId != null)
             {
-                var game = DB.Rows("SELECT * FROM Games WHERE Id = @Id", new Data.Game { Id = playerData.GameId.Value })?.First();
-                if (game != null)
-                {
-                    var organiser = DB.Rows("SELECT * FROM Players WHERE Id = @Id", new Data.Player { Id = game.OrganiserId })?.First();
-                    if (organiser != null)
-                        player.Game = new Interface.Game { OrganiserName = organiser.Name };
-                }
+                var gameMaster = DB.Rows("SELECT * FROM Players WHERE Id = @Id", new Data.Player { Id = playerData.GameMasterId.Value })?.FirstOrDefault();
+                if (gameMaster != null)
+                    player.GameMaster = ConvertPlayer(gameMaster);
             }
             return player;
         }
@@ -63,7 +59,9 @@ namespace RotterdamDetectives_Data
 
         public bool DeletePlayer(string name)
         {
-            return DB.Execute("DELETE FROM Players WHERE Name = @Name", new Data.Player { Name = name });
+            int playerId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = name }) ?? 0;
+            return DB.Execute("DELETE FROM Players WHERE Name = @Name", new Data.Player { Name = name })
+                && DB.Execute("DELETE FROM Tickets WHERE PlayerId = @PlayerId", new Data.Ticket { PlayerId = playerId });
         }
 
         public bool AddStation(string name, double latitude, double longitude)
@@ -78,7 +76,7 @@ namespace RotterdamDetectives_Data
 
         public IStationData? GetStationData(string name)
         {
-            return DB.Rows("SELECT * FROM Stations WHERE Name = @Name", new Data.Station { Name = name })?.First();
+            return DB.Rows("SELECT * FROM Stations WHERE Name = @Name", new Data.Station { Name = name })?.FirstOrDefault();
         }
 
         public IEnumerable<IStationData>? GetAllStationDatas(string name)
@@ -86,10 +84,16 @@ namespace RotterdamDetectives_Data
             return DB.Rows("SELECT * FROM Stations WHERE Name = @Name", new Data.Station { Name = name });
         }
 
-        public bool ConnectStations(int from, int to, int transportType)
+        public bool ConnectStations(string from, string to, int transportType)
         {
-            return DB.Execute("INSERT INTO Connections (Station1, Station2, TransportType) VALUES (@Station1, @Station2, @TransportType)", new Data.Connection { From = from, To = to, TransportType = transportType })
-                && DB.Execute(DB.LastQuery, new Data.Connection { From = to, To = from, TransportType = transportType });
+            int fromId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = from }) ?? 0;
+            if (fromId == 0)
+                return false;
+            int toId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = to }) ?? 0;
+            if (toId == 0)
+                return false;
+            return DB.Execute("INSERT INTO Connections (Station1, Station2, TransportType) VALUES (@Station1, @Station2, @TransportType)", new Data.Connection { From = fromId, To = toId, TransportType = transportType })
+                && DB.Execute(DB.LastQuery, new Data.Connection { From = toId, To = fromId, TransportType = transportType });
         }
 
         public IEnumerable<IConnectedStation>? GetConnectedStations(string stationName)
@@ -103,7 +107,7 @@ namespace RotterdamDetectives_Data
             List<IConnectedStation> connectedStations = new();
             foreach (var connection in connections)
             {
-                var station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = connection.To })?.First();
+                var station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = connection.To })?.FirstOrDefault();
                 if (station == null)
                     continue;
                 connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = connection.TransportType });
@@ -111,53 +115,48 @@ namespace RotterdamDetectives_Data
             return connectedStations;
         }
 
-        public bool DisconnectStations(int from, int to)
+        public bool DisconnectStations(string from, string to)
         {
-            return DB.Execute("DELETE FROM Connections WHERE Station1 = @Station1 AND Station2 = @Station2", new Data.Connection { From = from, To = to })
-                && DB.Execute(DB.LastQuery, new Data.Connection { From = to, To = from });
+            int fromId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = from }) ?? 0;
+            if (fromId == 0)
+                return false;
+            int toId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = to }) ?? 0;
+            if (toId == 0)
+                return false;
+            return DB.Execute("DELETE FROM Connections WHERE From = @From AND To = @To", new Data.Connection { From = fromId, To = toId })
+                && DB.Execute(DB.LastQuery, new Data.Connection { From = toId, To = fromId });
         }
 
         public bool DeleteStation(string name)
         {
-            return DB.Execute("DELETE FROM Stations WHERE Name = @Name", new Data.Station { Name = name });
+            int stationId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = name }) ?? 0;
+            return DB.Execute("DELETE FROM Stations WHERE Name = @Name", new Data.Station { Name = name })
+                && DB.Execute("DELETE FROM Connections WHERE From = @From OR To = @To", new Data.Connection { From = stationId, To = stationId });
         }
 
-        public bool CreateGame(string organiserName) {
-            int organiserId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = organiserName }) ?? 0;
-            if (organiserId == 0)
-                return false;
-            return DB.Execute("INSERT INTO Games (OrganiserId) VALUES (@OrganiserId)", new Data.Game { OrganiserId = organiserId }) && AddPlayerToGame(organiserName, organiserName);
-        }
-
-        public bool AddPlayerToGame(string playerName, string organiserName)
+        public bool AddPlayerToGame(string playerName, string gameMasterName)
         {
-            int organiserId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = organiserName }) ?? 0;
-            if (organiserId == 0)
+            int gameMasterId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = gameMasterName }) ?? 0;
+            if (gameMasterId == 0)
                 return false;
-            int gameId = DB.Field<Data.Game, int>("SELECT Id FROM Games WHERE OrganiserId = @OrganiserId", new Data.Game { OrganiserId = organiserId }) ?? 0;
-            if (gameId == 0)
-                return false;
-            return DB.Execute("UPDATE Players SET GameId = @GameId WHERE Name = @Name", new Data.Player { Name = playerName, GameId = gameId });
+            return DB.Execute("UPDATE Players SET GameMasterId = @GameMasterId WHERE Name = @Name", new Data.Player { Name = playerName, GameMasterId = gameMasterId });
         }
 
-        public IEnumerable<IPlayerData>? GetPlayersInGame(string organiserName)
+        public IEnumerable<IPlayerData>? GetPlayersInGame(string gameMasterName)
         {
-            int organiserId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = organiserName }) ?? 0;
-            if (organiserId == 0)
+            int gameMasterId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = gameMasterName }) ?? 0;
+            if (gameMasterId == 0)
                 return null;
-            int gameId = DB.Field<Data.Game, int>("SELECT Id FROM Games WHERE OrganiserId = @OrganiserId", new Data.Game { OrganiserId = organiserId }) ?? 0;
-            if (gameId == 0)
-                return null;
-            var players = DB.Rows("SELECT * FROM Players WHERE GameId = @GameId", new Data.Player { GameId = gameId });
+            var players = DB.Rows("SELECT * FROM Players WHERE GameMasterId = @GameMasterId", new Data.Player { GameMasterId = gameMasterId });
             return players?.Select(ConvertPlayer);
         }
 
-        public bool DeleteGame(string organiserName)
+        public bool EndGame(string gameMasterName)
         {
-            int organiserId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = organiserName }) ?? 0;
-            if (organiserId == 0)
+            int gameMasterId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = gameMasterName }) ?? 0;
+            if (gameMasterId == 0)
                 return false;
-            return DB.Execute("DELETE FROM Games WHERE OrganiserId = @OrganiserId", new Data.Game { OrganiserId = organiserId });
+            return DB.Execute("UPDATE Players SET GameMasterId = NULL WHERE GameMasterId = @GameMasterId", new Data.Player { GameMasterId = gameMasterId });
         }
 
         public bool AddTransportType(string name, int maxTickets)
@@ -167,6 +166,13 @@ namespace RotterdamDetectives_Data
 
         public bool DeleteTransportType(string name)
         {
+            int typeId = DB.Field<Data.TransportType, int>("SELECT Id FROM TransportTypes WHERE Name = @Name", new Data.TransportType { Name = name }) ?? 0;
+            bool inUseTickets = DB.Field<Data.Ticket, bool>("SELECT COUNT(*) > 0 FROM Tickets WHERE TransportTypeId = @TransportTypeId", new Data.Ticket { TransportTypeId = typeId }) ?? false;
+            if (inUseTickets)
+                return false;
+            bool inUseConnections = DB.Field<Data.Connection, bool>("SELECT COUNT(*) > 0 FROM Connections WHERE TransportType = @TransportType", new Data.Connection { TransportType = typeId }) ?? false;
+            if (inUseConnections)
+                return false;
             return DB.Execute("DELETE FROM TransportTypes WHERE Name = @Name", new Data.TransportType { Name = name });
         }
 

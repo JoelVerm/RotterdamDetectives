@@ -8,5 +8,8 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface IProcessedDataSource
     {
+        public bool UserExists(string username);
+        public void RegisterUser(string username, string password);
+        public bool LoginUser(string username, string password);
     }
 }
