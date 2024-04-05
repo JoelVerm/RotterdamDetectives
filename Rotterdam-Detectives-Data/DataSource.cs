@@ -79,6 +79,11 @@ namespace RotterdamDetectives_Data
             return DB.Rows("SELECT * FROM Stations WHERE Name = @Name", new Data.Station { Name = name })?.FirstOrDefault();
         }
 
+        public IEnumerable<IStationData>? GetStations()
+        {
+            return DB.Rows("SELECT * FROM Stations", new Data.Station());
+        }
+
         public IEnumerable<IStationData>? GetAllStationDatas(string name)
         {
             return DB.Rows("SELECT * FROM Stations WHERE Name = @Name", new Data.Station { Name = name });

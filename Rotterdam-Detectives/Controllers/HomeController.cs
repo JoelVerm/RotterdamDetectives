@@ -17,7 +17,9 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login");
-            return View();
+            if (dataSource.IsAdmin(Request.Cookies["username"]!))
+                return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Index", "Player");
         }
 
         public IActionResult Login()

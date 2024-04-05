@@ -11,5 +11,10 @@ namespace RotterdamDetectives_LogicInterface
         public bool UserExists(string username);
         public void RegisterUser(string username, string password);
         public bool LoginUser(string username, string password);
+        public bool IsAdmin(string username);
+
+        public string GetStationByPlayer(string username);
+        public string GetGameMasterByPlayer(string username);
+        public List<IStation> GetStationsAndPlayers(string username);
     }
 }

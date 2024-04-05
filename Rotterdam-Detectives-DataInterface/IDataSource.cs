@@ -11,6 +11,7 @@
         public bool AddStation(string name, double latitude, double longitude);
         public bool MapStation(string name, int mapX, int mapY);
         public IStationData? GetStationData(string name);
+        public IEnumerable<IStationData>? GetStations();
         public bool ConnectStations(string from, string to, int transportType);
         public IEnumerable<IConnectedStation>? GetConnectedStations(string stationName);
         public bool DisconnectStations(string from, string to);

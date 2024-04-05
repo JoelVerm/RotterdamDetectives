@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model PlayerViewModel
+
+<div class="container">
+    <div class="col">
+        <h2>Station</h2>
+        <p>@Model.OwnStation</p>
+        <h2>Game master</h2>
+        <p>@Model.GameMaster</p>
+    </div>
+    <div class="col">
+        <div class="list-group">
+            @foreach (var station in Model.Stations)
+            {
+                <div class="list-group-item">
+                    <h4>@station.Name</h4>
+					<p>@string.Join(", ", station.Players)</p>
+					<a href="/Home/MoveStation?Station=@station.Name" class="btn btn-primary">Move here</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

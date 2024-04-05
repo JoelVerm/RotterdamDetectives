@@ -37,5 +37,42 @@ namespace RotterdamDetectives_Logic
             var passwordHash = passwordHasher.HashPassword(username, password);
             dataSource.AddPlayer(username, passwordHash);
         }
+
+        public bool IsAdmin(string username)
+        {
+            return dataSource.GetPlayerData(username)?.IsAdmin ?? false;
+        }
+
+        public string GetStationByPlayer(string username)
+        {
+            return dataSource.GetPlayerData(username)?.Station?.Name ?? "";
+        }
+
+        public string GetGameMasterByPlayer(string username)
+        {
+            return dataSource.GetPlayerData(username)?.GameMaster?.Name ?? "";
+        }
+
+        public List<IStation> GetStationsAndPlayers(string username)
+        {
+            var stations = dataSource.GetStations()?.Select(s =>
+                new Interface.Station { Name = s.Name }).ToList<IStation>();
+            if (stations == null)
+                return new List<IStation>();
+            var player = dataSource.GetPlayerData(username)!;
+            if (player.GameMaster != null)
+            {
+                var gamePlayers = dataSource.GetPlayersInGame(player.GameMaster?.Name!);
+                if (gamePlayers != null)
+                {
+                    foreach (var gamePlayer in gamePlayers)
+                    {
+                        var station = stations.FirstOrDefault(s => s.Name == gamePlayer.Station?.Name);
+                        station?.Players.Add(gamePlayer.Name);
+                    }
+                }
+            }
+            return stations;
+        }
     }
 }
