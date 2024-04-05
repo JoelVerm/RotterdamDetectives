@@ -86,7 +86,8 @@ namespace RotterdamDetectives_Data
                             prop.SetValue(
                                 obj,
                                 Convert.ChangeType(
-                                    item[prop.Name], prop.PropertyType));
+                                    item[prop.Name],
+                                    Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType));
                     }
                     list.Add(obj);
                 }

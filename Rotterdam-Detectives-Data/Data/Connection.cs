@@ -11,6 +11,6 @@ namespace RotterdamDetectives_Data.Data
         public int Id { get; set; }
         public int From { get; set; }
         public int To { get; set; }
-        public int TransportType { get; set; }
+        public int TransportTypeId { get; set; }
     }
 }

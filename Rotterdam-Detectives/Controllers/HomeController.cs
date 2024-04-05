@@ -55,6 +55,13 @@ namespace RotterdamDetectives_Presentation.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("username");
+            Response.Cookies.Delete("password");
+            return RedirectToAction("Login");
+        }
+
         bool LoggedIn()
         {
             if (Request.Cookies["username"] == null || Request.Cookies["password"] == null)

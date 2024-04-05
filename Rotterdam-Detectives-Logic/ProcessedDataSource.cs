@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,18 +25,18 @@ namespace RotterdamDetectives_Logic
             return dataSource.GetPlayerData(username) != null;
         }
 
+        public void RegisterUser(string username, string password)
+        {
+            var passwordHash = passwordHasher.HashPassword(username, password);
+            dataSource.AddPlayer(username, passwordHash);
+        }
+
         public bool LoginUser(string username, string password)
         {
             var player = dataSource.GetPlayerData(username);
             if (player == null)
                 return false;
             return passwordHasher.VerifyHashedPassword(username, password, player.PasswordHash);
-        }
-
-        public void RegisterUser(string username, string password)
-        {
-            var passwordHash = passwordHasher.HashPassword(username, password);
-            dataSource.AddPlayer(username, passwordHash);
         }
 
         public bool IsAdmin(string username)
@@ -48,9 +49,17 @@ namespace RotterdamDetectives_Logic
             return dataSource.GetPlayerData(username)?.Station?.Name ?? "";
         }
 
-        public string GetGameMasterByPlayer(string username)
+        public bool MovePlayerToStation(string username, string station)
         {
-            return dataSource.GetPlayerData(username)?.GameMaster?.Name ?? "";
+            var currentStation = dataSource.GetPlayerData(username)?.Station;
+            if (currentStation != null)
+            {
+                if (currentStation.Name == station)
+                    return false;
+                if (!dataSource.GetConnectedStations(currentStation.Name)?.Any(s => s.Station.Name == station) ?? true)
+                    return false;
+            }
+            return dataSource.MovePlayerToStation(username, station);
         }
 
         public List<IStation> GetStationsAndPlayers(string username)
@@ -73,6 +82,10 @@ namespace RotterdamDetectives_Logic
                 }
             }
             return stations;
+        }
+        public string GetGameMasterByPlayer(string username)
+        {
+            return dataSource.GetPlayerData(username)?.GameMaster?.Name ?? "";
         }
     }
 }

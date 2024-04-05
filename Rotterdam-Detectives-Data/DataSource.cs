@@ -97,8 +97,8 @@ namespace RotterdamDetectives_Data
             int toId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = to }) ?? 0;
             if (toId == 0)
                 return false;
-            return DB.Execute("INSERT INTO Connections (Station1, Station2, TransportType) VALUES (@Station1, @Station2, @TransportType)", new Data.Connection { From = fromId, To = toId, TransportType = transportType })
-                && DB.Execute(DB.LastQuery, new Data.Connection { From = toId, To = fromId, TransportType = transportType });
+            return DB.Execute("INSERT INTO Connections ([From], [To], TransportType) VALUES (@From, @To, @TransportType)", new Data.Connection { From = fromId, To = toId, TransportTypeId = transportType })
+                && DB.Execute(DB.LastQuery, new Data.Connection { From = toId, To = fromId, TransportTypeId = transportType });
         }
 
         public IEnumerable<IConnectedStation>? GetConnectedStations(string stationName)
@@ -106,7 +106,7 @@ namespace RotterdamDetectives_Data
             int stationId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = stationName }) ?? 0;
             if (stationId == 0)
                 return null;
-            var connections = DB.Rows("SELECT * FROM Connections WHERE From = @From", new Data.Connection { From = stationId });
+            var connections = DB.Rows("SELECT * FROM Connections WHERE [From] = @From", new Data.Connection { From = stationId });
             if (connections == null)
                 return null;
             List<IConnectedStation> connectedStations = new();
@@ -115,7 +115,7 @@ namespace RotterdamDetectives_Data
                 var station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = connection.To })?.FirstOrDefault();
                 if (station == null)
                     continue;
-                connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = connection.TransportType });
+                connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = connection.TransportTypeId });
             }
             return connectedStations;
         }
@@ -128,7 +128,7 @@ namespace RotterdamDetectives_Data
             int toId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = to }) ?? 0;
             if (toId == 0)
                 return false;
-            return DB.Execute("DELETE FROM Connections WHERE From = @From AND To = @To", new Data.Connection { From = fromId, To = toId })
+            return DB.Execute("DELETE FROM Connections WHERE [From] = @From AND [To] = @To", new Data.Connection { From = fromId, To = toId })
                 && DB.Execute(DB.LastQuery, new Data.Connection { From = toId, To = fromId });
         }
 
@@ -136,7 +136,7 @@ namespace RotterdamDetectives_Data
         {
             int stationId = DB.Field<Data.Station, int>("SELECT Id FROM Stations WHERE Name = @Name", new Data.Station { Name = name }) ?? 0;
             return DB.Execute("DELETE FROM Stations WHERE Name = @Name", new Data.Station { Name = name })
-                && DB.Execute("DELETE FROM Connections WHERE From = @From OR To = @To", new Data.Connection { From = stationId, To = stationId });
+                && DB.Execute("DELETE FROM Connections WHERE [From] = @From OR [To] = @To", new Data.Connection { From = stationId, To = stationId });
         }
 
         public bool AddPlayerToGame(string playerName, string gameMasterName)
@@ -175,7 +175,7 @@ namespace RotterdamDetectives_Data
             bool inUseTickets = DB.Field<Data.Ticket, bool>("SELECT COUNT(*) > 0 FROM Tickets WHERE TransportTypeId = @TransportTypeId", new Data.Ticket { TransportTypeId = typeId }) ?? false;
             if (inUseTickets)
                 return false;
-            bool inUseConnections = DB.Field<Data.Connection, bool>("SELECT COUNT(*) > 0 FROM Connections WHERE TransportType = @TransportType", new Data.Connection { TransportType = typeId }) ?? false;
+            bool inUseConnections = DB.Field<Data.Connection, bool>("SELECT COUNT(*) > 0 FROM Connections WHERE TransportType = @TransportType", new Data.Connection { TransportTypeId = typeId }) ?? false;
             if (inUseConnections)
                 return false;
             return DB.Execute("DELETE FROM TransportTypes WHERE Name = @Name", new Data.TransportType { Name = name });

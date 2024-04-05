@@ -11,6 +11,6 @@ namespace RotterdamDetectives_Logic.Interface
     {
         public string Name { get; set; }
 
-        public List<string> Players { get; set; }
+        public List<string> Players { get; set; } = new();
     }
 }
