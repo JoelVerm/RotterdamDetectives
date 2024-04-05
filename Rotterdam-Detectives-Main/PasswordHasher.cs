@@ -13,7 +13,7 @@ namespace RotterdamDetectives_Main
 
         public bool VerifyHashedPassword(string username, string password, string hash)
         {
-            return passwordHasher.VerifyHashedPassword(username, password, hash) == PasswordVerificationResult.Success;
+            return passwordHasher.VerifyHashedPassword(username, hash, password) == PasswordVerificationResult.Success;
         }
     }
 }
