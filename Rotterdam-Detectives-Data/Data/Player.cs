@@ -15,6 +15,6 @@ namespace RotterdamDetectives_Data.Data
         public int GameMode { get; set; }
         public bool IsAdmin { get; set; }
         public int? StationId { get; set; } = null;
-        public int? GameId { get; set; } = null;
+        public int? GameMasterId { get; set; } = null;
     }
 }

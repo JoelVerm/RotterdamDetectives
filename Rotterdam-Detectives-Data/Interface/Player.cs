@@ -15,6 +15,6 @@ namespace RotterdamDetectives_Data.Interface
         public int GameMode { get; set; }
         public bool IsAdmin { get; set; }
         public IStationData? Station { get; set; }
-        public IGameData? Game { get; set; }
+        public IPlayerData? GameMaster { get; set; }
     }
 }

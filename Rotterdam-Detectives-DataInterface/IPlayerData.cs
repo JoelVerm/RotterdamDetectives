@@ -7,6 +7,6 @@
         public int GameMode { get; }
         public bool IsAdmin { get; }
         public IStationData? Station { get; }
-        public IGameData? Game { get; }
+        public IPlayerData? GameMaster { get; }
     }
 }
