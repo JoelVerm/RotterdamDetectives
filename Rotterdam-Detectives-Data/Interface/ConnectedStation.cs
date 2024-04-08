@@ -10,6 +10,6 @@ namespace RotterdamDetectives_Data.Interface
     internal class ConnectedStation : IConnectedStation
     {
         public IStationData Station { get; set; }
-        public int TransportType { get; set; }
+        public string TransportType { get; set; }
     }
 }

@@ -9,6 +9,6 @@ namespace RotterdamDetectives_DataInterface
     public interface IConnectedStation
     {
         public IStationData Station { get; }
-        public int TransportType { get; }
+        public string TransportType { get; }
     }
 }

@@ -10,5 +10,12 @@ namespace RotterdamDetectives_LogicInterface
     {
         public string Name { get; }
         public List<string> Players { get; }
+        public List<IStationConnection> Connections { get; }
+    }
+
+    public interface IStationConnection
+    {
+        public string Name { get; }
+        public string TransportType { get; }
     }
 }

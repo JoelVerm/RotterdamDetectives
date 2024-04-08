@@ -14,6 +14,8 @@ namespace RotterdamDetectives_Logic
         private readonly IDataSource dataSource;
         private readonly IPasswordHasher passwordHasher;
 
+        private List<string> lastErrors = new();
+
         public ProcessedDataSource(IDataSource _dataSource, IPasswordHasher _passwordHasher)
         {
             dataSource = _dataSource;
@@ -46,7 +48,10 @@ namespace RotterdamDetectives_Logic
 
         public string GetStationByPlayer(string username)
         {
-            return dataSource.GetPlayerData(username)?.Station?.Name ?? "";
+            var station = dataSource.GetPlayerData(username)?.Station?.Name;
+            if (station == null)
+                lastErrors.Add("Could not get your station");
+            return station ?? "";
         }
 
         public bool MovePlayerToStation(string username, string station)
@@ -55,9 +60,15 @@ namespace RotterdamDetectives_Logic
             if (currentStation != null)
             {
                 if (currentStation.Name == station)
+                {
+                    lastErrors.Add("You are already at this station");
                     return false;
+                }
                 if (!dataSource.GetConnectedStations(currentStation.Name)?.Any(s => s.Station.Name == station) ?? true)
+                {
+                    lastErrors.Add("You cannot move to this station");
                     return false;
+                }
             }
             return dataSource.MovePlayerToStation(username, station);
         }
@@ -65,9 +76,23 @@ namespace RotterdamDetectives_Logic
         public List<IStation> GetStationsAndPlayers(string username)
         {
             var stations = dataSource.GetStations()?.Select(s =>
-                new Interface.Station { Name = s.Name }).ToList<IStation>();
+                new Interface.Station {
+                    Name = s.Name
+                }).ToList();
             if (stations == null)
+            {
+                lastErrors.Add("Could not get stations");
                 return new List<IStation>();
+            }
+
+            foreach (var station in stations)
+            {
+                var connections = dataSource.GetConnectedStations(station.Name)?.Select(cs => new Interface.StationConnection { Name = cs.Station.Name, TransportType = cs.TransportType }).ToList<IStationConnection>();
+                if (connections == null)
+                    lastErrors.Add("Could not get connections for station " + station.Name);
+                station.Connections = connections ?? new List<IStationConnection>();
+            }
+
             var player = dataSource.GetPlayerData(username)!;
             if (player.GameMaster != null)
             {
@@ -81,11 +106,22 @@ namespace RotterdamDetectives_Logic
                     }
                 }
             }
-            return stations;
+
+            return stations.ToList<IStation>();
         }
-        public string GetGameMasterByPlayer(string username)
+
+        public string? GetGameMasterByPlayer(string username)
         {
-            return dataSource.GetPlayerData(username)?.GameMaster?.Name ?? "";
+            return dataSource.GetPlayerData(username)?.GameMaster?.Name;
+        }
+
+        public string? GetLastError()
+        {
+            if (lastErrors.Count == 0)
+                return null;
+            var error = string.Join("; ", lastErrors);
+            lastErrors.Clear();
+            return error;
         }
     }
 }

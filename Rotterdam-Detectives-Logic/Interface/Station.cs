@@ -10,7 +10,13 @@ namespace RotterdamDetectives_Logic.Interface
     internal class Station : IStation
     {
         public string Name { get; set; }
-
         public List<string> Players { get; set; } = new();
+        public List<IStationConnection> Connections { get; set; } = new();
+    }
+
+    internal class StationConnection: IStationConnection
+    {
+        public string Name { get; set; }
+        public string TransportType { get; set; }
     }
 }

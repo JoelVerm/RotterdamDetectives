@@ -19,8 +19,10 @@ namespace RotterdamDetectives_Presentation.Controllers
                 return RedirectToAction("Login", "Home");
             var playerModel = new PlayerViewModel();
             playerModel.OwnStation = dataSource.GetStationByPlayer(Request.Cookies["username"]!);
-            playerModel.GameMaster = dataSource.GetGameMasterByPlayer(Request.Cookies["username"]!);
+            playerModel.GameMaster = dataSource.GetGameMasterByPlayer(Request.Cookies["username"]!)
+                ?? "You have not joined a game yet";
             playerModel.Stations = dataSource.GetStationsAndPlayers(Request.Cookies["username"]!);
+            playerModel.ErrorMessage = dataSource.GetLastError();
             return View(playerModel);
         }
 

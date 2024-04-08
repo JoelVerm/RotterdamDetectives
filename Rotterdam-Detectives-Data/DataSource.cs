@@ -115,7 +115,10 @@ namespace RotterdamDetectives_Data
                 var station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = connection.To })?.FirstOrDefault();
                 if (station == null)
                     continue;
-                connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = connection.TransportTypeId });
+                var transportType = DB.Rows("SELECT * FROM TransportTypes WHERE Id = @Id", new Data.TransportType { Id = connection.TransportTypeId })?.FirstOrDefault();
+                if (transportType == null)
+                    continue;
+                connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = transportType.Name });
             }
             return connectedStations;
         }

@@ -5,22 +5,33 @@
 @model PlayerViewModel
 
 <div class="container">
-    <div class="col">
-        <h2>Station</h2>
-        <p>@Model.OwnStation</p>
-        <h2>Game master</h2>
-        <p>@Model.GameMaster</p>
-    </div>
-    <div class="col">
-        <div class="list-group">
-            @foreach (var station in Model.Stations)
-            {
-                <div class="list-group-item">
-                    <h4>@station.Name</h4>
-					<p>@string.Join(", ", station.Players)</p>
-					<a href="/Player/MoveStation?Station=@station.Name" class="btn btn-primary">Move here</a>
-                </div>
-            }
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Station</h2>
+            <p>@Model.OwnStation</p>
+            <h2>Game master</h2>
+            <p>@Model.GameMaster</p>
+        </div>
+        <div class="col">
+            <div class="list-group">
+                @foreach (var station in Model.Stations)
+                {
+                    <div class="list-group-item">
+                        <h4>@station.Name</h4>
+                        <p>
+                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Name} ({cs.TransportType})")).OrDefault("None") <br />
+                            Players: @string.Join(", ", station.Players).OrDefault("None")
+                        </p>
+					    <a href="/Player/MoveStation?Station=@station.Name" class="btn btn-primary">Move here</a>
+                    </div>
+                }
+            </div>
         </div>
     </div>
+    @if (Model.ErrorMessage != null)
+	{
+		<div class="row mb-3 alert alert-danger" role="alert">
+			@Model.ErrorMessage
+		</div>
+	}
 </div>
