@@ -16,13 +16,16 @@
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
-                    <div class="list-group-item">
+                    <div class="list-group-item @if (station.Name == Model.OwnStation) {<text>active</text>}">
                         <h4>@station.Name</h4>
                         <p>
                             Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Name} ({cs.TransportType})")).OrDefault("None") <br />
                             Players: @string.Join(", ", station.Players).OrDefault("None")
                         </p>
-					    <a href="/Player/MoveStation?Station=@station.Name" class="btn btn-primary">Move here</a>
+                        @foreach (var conn in Model.ConnectedStations.FindAll(cs => cs.Name == station.Name))
+                        {
+                            <a href="/Player/MoveStation?Station=@station.Name&TransportType=@conn.TransportType" class="btn btn-primary">Move here by @conn.TransportType</a>
+                        }
                     </div>
                 }
             </div>

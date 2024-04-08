@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_LogicInterface
 {
-    public interface IStation
+    public interface IStationConnection
     {
         public string Name { get; }
-        public List<string> Players { get; }
-        public List<IStationConnection> Connections { get; }
+        public string TransportType { get; }
     }
 }

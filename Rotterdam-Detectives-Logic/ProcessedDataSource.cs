@@ -110,6 +110,14 @@ namespace RotterdamDetectives_Logic
             return stations.ToList<IStation>();
         }
 
+        public List<IStationConnection> GetConnectedStations(string station)
+        {
+            var connections = dataSource.GetConnectedStations(station)?.Select(cs => new Interface.StationConnection { Name = cs.Station.Name, TransportType = cs.TransportType }).ToList<IStationConnection>();
+            if (connections == null)
+                lastErrors.Add("Could not get connections for station " + station);
+            return connections ?? new List<IStationConnection>();
+        }
+
         public string? GetGameMasterByPlayer(string username)
         {
             return dataSource.GetPlayerData(username)?.GameMaster?.Name;

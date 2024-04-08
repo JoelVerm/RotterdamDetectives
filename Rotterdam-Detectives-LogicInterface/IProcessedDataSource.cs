@@ -16,6 +16,7 @@ namespace RotterdamDetectives_LogicInterface
         public string GetStationByPlayer(string username);
         public bool MovePlayerToStation(string username, string station);
         public List<IStation> GetStationsAndPlayers(string username);
+        public List<IStationConnection> GetConnectedStations(string station);
 
         public string? GetGameMasterByPlayer(string username);
 
