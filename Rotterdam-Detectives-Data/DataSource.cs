@@ -177,6 +177,11 @@ namespace RotterdamDetectives_Data
             return DB.Execute("INSERT INTO TransportTypes (Name) VALUES (@Name)", new Data.TransportType { Name = name, MaxTickets = maxTickets });
         }
 
+        public IEnumerable<string>? GetTransportTypes()
+        {
+            return DB.Rows("SELECT * FROM TransportTypes", new Data.TransportType())?.Select(t => t.Name);
+        }
+
         public bool DeleteTransportType(string name)
         {
             int typeId = DB.Field<Data.TransportType, int>("SELECT Id FROM TransportTypes WHERE Name = @Name", new Data.TransportType { Name = name }) ?? 0;

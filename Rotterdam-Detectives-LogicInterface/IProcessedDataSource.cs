@@ -14,7 +14,7 @@ namespace RotterdamDetectives_LogicInterface
         public bool IsAdmin(string username);
 
         public string GetStationByPlayer(string username);
-        public bool MovePlayerToStation(string username, string station);
+        public bool MovePlayerToStation(string username, string station, string tansportType);
         public List<IStation> GetStationsAndPlayers(string username);
         public List<IStationConnection> GetConnectedStations(string station);
 
@@ -23,6 +23,8 @@ namespace RotterdamDetectives_LogicInterface
         public void AddPlayerToGame(string gameMaster, string playerName);
         public void LeaveGame(string username);
         public void EndGame(string gameMaster);
+
+        public List<ITicket> GetTicketsByPlayer(string username);
 
         public string? GetLastError();
     }

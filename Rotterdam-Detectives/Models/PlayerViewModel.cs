@@ -7,6 +7,7 @@ namespace RotterdamDetectives_Presentation.Models
         public string OwnStation { get; set; }
         public List<IStationConnection> ConnectedStations { get; set; }
         public List<IStation> Stations { get; set; }
+        public List<ITicket> Tickets { get; set; }
         public string? ErrorMessage { get; set; } = null;
     }
 }

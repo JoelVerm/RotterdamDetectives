@@ -24,6 +24,7 @@
         public bool EndGame(string gameMasterName);
 
         public bool AddTransportType(string name, int maxTickets);
+        public IEnumerable<string>? GetTransportTypes();
         public bool DeleteTransportType(string name);
 
         public bool AddTicket(string playerName, string transportType);

@@ -54,22 +54,35 @@ namespace RotterdamDetectives_Logic
             return station ?? "";
         }
 
-        public bool MovePlayerToStation(string username, string station)
+        public bool MovePlayerToStation(string username, string station, string tansportType)
         {
             var currentStation = dataSource.GetPlayerData(username)?.Station;
-            if (currentStation != null)
+            if (currentStation == null)
+                return false;
+            if (currentStation.Name == station)
             {
-                if (currentStation.Name == station)
-                {
-                    lastErrors.Add("You are already at this station");
-                    return false;
-                }
-                if (!dataSource.GetConnectedStations(currentStation.Name)?.Any(s => s.Station.Name == station) ?? true)
-                {
-                    lastErrors.Add("You cannot move to this station");
-                    return false;
-                }
+                lastErrors.Add("You are already at this station");
+                return false;
             }
+            var connections = dataSource.GetConnectedStations(currentStation.Name)?.Where(cs => cs.Station.Name == station);
+            if (connections == null || connections.Count() == 0)
+            {
+                lastErrors.Add("You cannot move to this station");
+                return false;
+            }
+            var connection = connections.FirstOrDefault(cs => cs.TransportType == tansportType);
+            if (connection == null)
+            {
+                lastErrors.Add("You cannot move to this station with this transport type");
+                return false;
+            }
+            var ticketCount = dataSource.GetTicketCount(username, tansportType);
+            if (ticketCount == null || ticketCount == 0)
+            {
+                lastErrors.Add("You do not have a ticket for this transport type");
+                return false;
+            }
+            dataSource.DeleteTicket(username, tansportType);
             return dataSource.MovePlayerToStation(username, station);
         }
 
@@ -146,6 +159,33 @@ namespace RotterdamDetectives_Logic
         {
             if (!dataSource.EndGame(gameMaster))
                 lastErrors.Add("Could not end game");
+        }
+
+        public List<ITicket> GetTicketsByPlayer(string username)
+        {
+            var tickets = new List<ITicket>();
+            var transportTypes = dataSource.GetTransportTypes();
+            if (transportTypes == null)
+            {
+                lastErrors.Add("Could not get your tickets");
+                return tickets;
+            }
+            foreach (var transportType in transportTypes)
+            {
+                var amount = dataSource.GetTicketCount(username, transportType);
+                if (amount == null)
+                {
+                    lastErrors.Add("Could not get your tickets");
+                    return tickets;
+                }
+                var ticket = new Interface.Ticket
+                {
+                    Name = transportType,
+                    Amount = amount.Value
+                };
+                tickets.Add(ticket);
+            }
+            return tickets;
         }
 
         public string? GetLastError()

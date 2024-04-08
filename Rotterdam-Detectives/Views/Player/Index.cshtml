@@ -24,6 +24,19 @@
                 }
             </div>
         </div>
+		<div class="col">
+            <div class="list-group">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <div class="list-group-item">
+                        <h4>@ticket.Name</h4>
+						<p>
+							Amount: @ticket.Amount
+						</p>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
     @if (Model.ErrorMessage != null)
 	{

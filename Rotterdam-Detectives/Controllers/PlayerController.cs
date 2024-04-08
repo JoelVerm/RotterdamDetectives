@@ -21,15 +21,16 @@ namespace RotterdamDetectives_Presentation.Controllers
             playerModel.OwnStation = dataSource.GetStationByPlayer(Request.Cookies["username"]!);
             playerModel.ConnectedStations = dataSource.GetConnectedStations(playerModel.OwnStation);
             playerModel.Stations = dataSource.GetStationsAndPlayers(Request.Cookies["username"]!);
+            playerModel.Tickets = dataSource.GetTicketsByPlayer(Request.Cookies["username"]!);
             playerModel.ErrorMessage = dataSource.GetLastError();
             return View(playerModel);
         }
 
-        public IActionResult MoveStation(string station)
+        public IActionResult MoveStation(string station, string transportType)
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            dataSource.MovePlayerToStation(Request.Cookies["username"]!, station);
+            dataSource.MovePlayerToStation(Request.Cookies["username"]!, station, transportType);
             return RedirectToAction("Index");
         }
 
