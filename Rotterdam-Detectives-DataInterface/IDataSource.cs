@@ -24,11 +24,12 @@
         public bool EndGame(string gameMasterName);
 
         public bool AddTransportType(string name, int maxTickets);
-        public IEnumerable<string>? GetTransportTypes();
+        public IEnumerable<ITransportType>? GetTransportTypes();
         public bool DeleteTransportType(string name);
 
         public bool AddTicket(string playerName, string transportType);
         public int? GetTicketCount(string playerName, string transportType);
         public bool DeleteTicket(string playerName, string transportType);
+        public bool DeleteAllTickets(string playerName);
     }
 }

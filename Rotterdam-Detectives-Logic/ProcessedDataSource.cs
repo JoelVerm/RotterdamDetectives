@@ -142,6 +142,9 @@ namespace RotterdamDetectives_Logic
             if (gameMaster == null)
                 gameMaster = username;
             var players = dataSource.GetPlayersInGame(gameMaster)?.Select(p => p.Name).ToList();
+            var gameMasterPlayer = dataSource.GetPlayerData(gameMaster);
+            if (gameMasterPlayer != null)
+                players?.Add(gameMasterPlayer.Name);
             return players ?? new List<string>();
         }
 
@@ -150,13 +153,47 @@ namespace RotterdamDetectives_Logic
             dataSource.AddPlayerToGame(playerName, gameMaster);
         }
 
+        public void StartGame(string gameMaster)
+        {
+            var players = GetPlayersInGame(gameMaster);
+            if (players == null || players.Count() <= 1)
+            {
+                lastErrors.Add("Not enough players to start the game");
+                return;
+            }
+            var transportTypes = dataSource.GetTransportTypes();
+            if (transportTypes == null)
+            {
+                lastErrors.Add("Could not start the game");
+                return;
+            }
+            foreach (var player in players)
+            {
+                var success = dataSource.DeleteAllTickets(player);
+                foreach (var transportType in transportTypes)
+                {
+                    for (int i = 0; i < transportType.MaxTickets; i++)
+                        success &= dataSource.AddTicket(player, transportType.Name);
+                }
+            }
+        }
+
         public void LeaveGame(string username)
         {
-            dataSource.RemovePlayerFromGame(username);
+            if (!dataSource.RemovePlayerFromGame(username) && dataSource.DeleteAllTickets(username))
+                lastErrors.Add("Could not leave game");
         }
 
         public void EndGame(string gameMaster)
         {
+            var players = dataSource.GetPlayersInGame(gameMaster);
+            if (players == null)
+                return;
+            foreach (var player in players)
+            {
+                if (!dataSource.DeleteAllTickets(player.Name))
+                   lastErrors.Add("Could not end game for player " + player.Name);
+            }
             if (!dataSource.EndGame(gameMaster))
                 lastErrors.Add("Could not end game");
         }
@@ -172,7 +209,7 @@ namespace RotterdamDetectives_Logic
             }
             foreach (var transportType in transportTypes)
             {
-                var amount = dataSource.GetTicketCount(username, transportType);
+                var amount = dataSource.GetTicketCount(username, transportType.Name);
                 if (amount == null)
                 {
                     lastErrors.Add("Could not get your tickets");
@@ -180,7 +217,7 @@ namespace RotterdamDetectives_Logic
                 }
                 var ticket = new Interface.Ticket
                 {
-                    Name = transportType,
+                    Name = transportType.Name,
                     Amount = amount.Value
                 };
                 tickets.Add(ticket);

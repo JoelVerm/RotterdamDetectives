@@ -177,9 +177,9 @@ namespace RotterdamDetectives_Data
             return DB.Execute("INSERT INTO TransportTypes (Name) VALUES (@Name)", new Data.TransportType { Name = name, MaxTickets = maxTickets });
         }
 
-        public IEnumerable<string>? GetTransportTypes()
+        public IEnumerable<ITransportType>? GetTransportTypes()
         {
-            return DB.Rows("SELECT * FROM TransportTypes", new Data.TransportType())?.Select(t => t.Name);
+            return DB.Rows("SELECT * FROM TransportTypes", new Data.TransportType());
         }
 
         public bool DeleteTransportType(string name)
@@ -225,6 +225,14 @@ namespace RotterdamDetectives_Data
             if (transportTypeId == 0)
                 return false;
             return DB.Execute("DELETE TOP(1) FROM Tickets WHERE PlayerId = @PlayerId AND TransportTypeId = @TransportTypeId", new Data.Ticket { PlayerId = playerId, TransportTypeId = transportTypeId });
+        }
+
+        public bool DeleteAllTickets(string playerName)
+        {
+            int playerId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = playerName }) ?? 0;
+            if (playerId == 0)
+                return false;
+            return DB.Execute("DELETE FROM Tickets WHERE PlayerId = @PlayerId", new Data.Ticket { PlayerId = playerId});
         }
     }
 }

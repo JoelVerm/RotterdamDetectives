@@ -21,6 +21,7 @@ namespace RotterdamDetectives_LogicInterface
         public string? GetGameMasterByPlayer(string username);
         public List<string> GetPlayersInGame(string username);
         public void AddPlayerToGame(string gameMaster, string playerName);
+        public void StartGame(string gameMaster);
         public void LeaveGame(string username);
         public void EndGame(string gameMaster);
 

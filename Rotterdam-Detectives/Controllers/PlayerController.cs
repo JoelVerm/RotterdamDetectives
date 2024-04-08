@@ -62,6 +62,14 @@ namespace RotterdamDetectives_Presentation.Controllers
             return RedirectToAction("Game");
         }
 
+        public IActionResult StartGame()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            dataSource.StartGame(Request.Cookies["username"]!);
+            return RedirectToAction("Game");
+        }
+
         public IActionResult EndGame()
         {
             if (!LoggedIn())
