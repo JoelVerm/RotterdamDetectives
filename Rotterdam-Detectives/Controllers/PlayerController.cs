@@ -20,8 +20,6 @@ namespace RotterdamDetectives_Presentation.Controllers
             var playerModel = new PlayerViewModel();
             playerModel.OwnStation = dataSource.GetStationByPlayer(Request.Cookies["username"]!);
             playerModel.ConnectedStations = dataSource.GetConnectedStations(playerModel.OwnStation);
-            playerModel.GameMaster = dataSource.GetGameMasterByPlayer(Request.Cookies["username"]!)
-                ?? "You have not joined a game yet";
             playerModel.Stations = dataSource.GetStationsAndPlayers(Request.Cookies["username"]!);
             playerModel.ErrorMessage = dataSource.GetLastError();
             return View(playerModel);
@@ -33,6 +31,42 @@ namespace RotterdamDetectives_Presentation.Controllers
                 return RedirectToAction("Login", "Home");
             dataSource.MovePlayerToStation(Request.Cookies["username"]!, station);
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Game()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            var model = new GameViewModel();
+            model.GameMaster = dataSource.GetGameMasterByPlayer(Request.Cookies["username"]!);
+            model.Players = dataSource.GetPlayersInGame(Request.Cookies["username"]!);
+            model.ErrorMessage = dataSource.GetLastError();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddPlayerToGame(string playerName)
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            dataSource.AddPlayerToGame(Request.Cookies["username"]!, playerName);
+            return RedirectToAction("Game");
+        }
+
+        public IActionResult LeaveGame()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            dataSource.LeaveGame(Request.Cookies["username"]!);
+            return RedirectToAction("Game");
+        }
+
+        public IActionResult EndGame()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            dataSource.EndGame(Request.Cookies["username"]!);
+            return RedirectToAction("Game");
         }
 
         bool LoggedIn()

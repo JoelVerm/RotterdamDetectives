@@ -19,6 +19,10 @@ namespace RotterdamDetectives_LogicInterface
         public List<IStationConnection> GetConnectedStations(string station);
 
         public string? GetGameMasterByPlayer(string username);
+        public List<string> GetPlayersInGame(string username);
+        public void AddPlayerToGame(string gameMaster, string playerName);
+        public void LeaveGame(string username);
+        public void EndGame(string gameMaster);
 
         public string? GetLastError();
     }

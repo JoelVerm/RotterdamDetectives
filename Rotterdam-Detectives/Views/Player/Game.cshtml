@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model GameViewModel
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col">
+            @if (Model.GameMaster != null)
+            {
+                <h2>Joined game</h2>
+                <p>Game master: @Model.GameMaster</p>
+                <p>Players: @string.Join(", ", Model.Players)</p>
+                <a class="btn btn-secondary" href="/Player/LeaveGame">Leave game</a>
+            }
+            else
+            {
+                <h2>Host a game</h2>
+                <p>Players: @string.Join(", ", Model.Players)</p>
+                <form method="post" action="AddPlayerToGame" class="form row mb-3">
+                    <div class="form-group col">
+                        <input type="text" class="form-control" id="playerName" name="playerName" placeholder="Enter player to add to your game" />
+                    </div>
+                    <button type="submit" class="btn btn-primary col flex-grow-0 text-nowrap">Add player</button>
+                </form>
+                <a class="btn btn-primary" href="/Player/EndGame">End game</a>
+            }
+        </>
+    </div>
+    @if (Model.ErrorMessage != null)
+	{
+		<div class="row mb-3 alert alert-danger" role="alert">
+			@Model.ErrorMessage
+		</div>
+	}
+</div>

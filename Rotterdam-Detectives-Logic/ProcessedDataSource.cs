@@ -93,17 +93,17 @@ namespace RotterdamDetectives_Logic
                 station.Connections = connections ?? new List<IStationConnection>();
             }
 
-            var player = dataSource.GetPlayerData(username)!;
-            if (player.GameMaster != null)
+            var gameMaster = dataSource.GetPlayerData(username)?.GameMaster?.Name;
+            if (gameMaster == null)
+                gameMaster = username;
+            var gamePlayers = dataSource.GetPlayersInGame(gameMaster)?.ToList();
+            if (gamePlayers != null)
             {
-                var gamePlayers = dataSource.GetPlayersInGame(player.GameMaster?.Name!);
-                if (gamePlayers != null)
+                gamePlayers.Add(dataSource.GetPlayerData(gameMaster)!);
+                foreach (var gamePlayer in gamePlayers)
                 {
-                    foreach (var gamePlayer in gamePlayers)
-                    {
-                        var station = stations.FirstOrDefault(s => s.Name == gamePlayer.Station?.Name);
-                        station?.Players.Add(gamePlayer.Name);
-                    }
+                    var station = stations.FirstOrDefault(s => s.Name == gamePlayer.Station?.Name);
+                    station?.Players.Add(gamePlayer.Name);
                 }
             }
 
@@ -121,6 +121,31 @@ namespace RotterdamDetectives_Logic
         public string? GetGameMasterByPlayer(string username)
         {
             return dataSource.GetPlayerData(username)?.GameMaster?.Name;
+        }
+
+        public List<string> GetPlayersInGame(string username)
+        {
+            var gameMaster = dataSource.GetPlayerData(username)?.GameMaster?.Name;
+            if (gameMaster == null)
+                gameMaster = username;
+            var players = dataSource.GetPlayersInGame(gameMaster)?.Select(p => p.Name).ToList();
+            return players ?? new List<string>();
+        }
+
+        public void AddPlayerToGame(string gameMaster, string playerName)
+        {
+            dataSource.AddPlayerToGame(playerName, gameMaster);
+        }
+
+        public void LeaveGame(string username)
+        {
+            dataSource.RemovePlayerFromGame(username);
+        }
+
+        public void EndGame(string gameMaster)
+        {
+            if (!dataSource.EndGame(gameMaster))
+                lastErrors.Add("Could not end game");
         }
 
         public string? GetLastError()

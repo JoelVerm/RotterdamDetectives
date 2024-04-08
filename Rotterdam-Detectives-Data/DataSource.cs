@@ -159,6 +159,11 @@ namespace RotterdamDetectives_Data
             return players?.Select(ConvertPlayer);
         }
 
+        public bool RemovePlayerFromGame(string playerName)
+        {
+            return DB.Execute("UPDATE Players SET GameMasterId = NULL WHERE Name = @Name", new Data.Player { Name = playerName });
+        }
+
         public bool EndGame(string gameMasterName)
         {
             int gameMasterId = DB.Field<Data.Player, int>("SELECT Id FROM Players WHERE Name = @Name", new Data.Player { Name = gameMasterName }) ?? 0;

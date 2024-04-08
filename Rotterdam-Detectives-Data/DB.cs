@@ -58,12 +58,15 @@ namespace RotterdamDetectives_Data
             var cmd = ConstructCommand(query, @params);
             try
             {
-                return (Out)cmd.ExecuteScalar();
+                var res = cmd.ExecuteScalar();
+                if (res == null)
+                    return null;
+                return (Out)(res);
             }
             catch (SqlException e)
             {
                 LastError = e.Message;
-                return default;
+                return null;
             }
         }
 
