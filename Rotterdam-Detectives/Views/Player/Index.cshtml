@@ -5,8 +5,15 @@
 @model PlayerViewModel
 
 <div class="container">
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="row mb-3 alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
     <div class="row mb-3">
         <div class="col">
+            <h2>Stations</h2>
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
@@ -24,24 +31,30 @@
                 }
             </div>
         </div>
-		<div class="col">
+        <div class="col">
+            <h2>Your tickets</h2>
             <div class="list-group">
                 @foreach (var ticket in Model.TicketAmounts)
                 {
                     <div class="list-group-item">
                         <h4>@ticket.ModeOfTransport</h4>
-						<p>
-							Amount: @ticket.Amount
-						</p>
+                        <span>
+                            Amount: @ticket.Amount
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col">
+            <h2>Your ticket history</h2>
+            <div class="list-group">
+                @foreach (var ticket in Model.TicketHistory)
+                {
+                    <div class="list-group-item">
+                        <span>@ticket.ModeOfTransport</span>
                     </div>
                 }
             </div>
         </div>
     </div>
-    @if (Model.ErrorMessage != null)
-	{
-		<div class="row mb-3 alert alert-danger" role="alert">
-			@Model.ErrorMessage
-		</div>
-	}
 </div>

@@ -5,6 +5,12 @@
 @model AdminViewModel
 
 <div class="container">
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="row mb-3 alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
     <h1>Admin</h1>
     <div class="row mb-3">
         <div class="col">
@@ -36,10 +42,4 @@
             </form>
         </div>
     </div>
-    @if (Model.ErrorMessage != null)
-    {
-        <div class="row mb-3 alert alert-danger" role="alert">
-            @Model.ErrorMessage
-        </div>
-    }
 </div>

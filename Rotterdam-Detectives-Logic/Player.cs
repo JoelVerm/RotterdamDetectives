@@ -10,6 +10,15 @@ namespace RotterdamDetectives_Logic
 {
     internal class Player: IPlayer
     {
+        private static readonly Dictionary<ModeOfTransport, int> startTicketAmounts = new()
+        {
+            { ModeOfTransport.Train, 10 },
+            { ModeOfTransport.Metro, 18 },
+            { ModeOfTransport.Tram, 15 },
+            { ModeOfTransport.Bus, 20 },
+            { ModeOfTransport.Walking, 8 }
+        };
+
         public string Name { get; private set; }
         internal string Password { get; private set; }
         public bool IsMrX { get; private set; }
@@ -48,6 +57,13 @@ namespace RotterdamDetectives_Logic
             currentStation = station;
 
             return Result.Ok();
+        }
+
+        internal void AddStartTickets()
+        {
+            foreach (var (type, amount) in startTicketAmounts)
+                for (int i = 0; i < amount; i++)
+                    tickets.Add(new Ticket(type));
         }
 
         public void ResetTickets()

@@ -9,18 +9,24 @@ namespace RotterdamDetectives_Presentation.Controllers
     {
         ILogic logic;
 
-        private string? errorMessage = null;
-
         public PlayerController(ILogic _logic) {
             logic = _logic;
         }
 
-        private void AddError(string message) => errorMessage += "; " + message;
+        private void AddError(string message)
+        {
+            var errorMessage = Request.Cookies["errorMessage"] ?? "";
+            if (errorMessage == "")
+                errorMessage = message;
+            else
+                errorMessage += "; " + message;
+            Response.Cookies.Append("errorMessage", errorMessage);
+        }
         private string? GetError()
         {
-            string? error = errorMessage;
-            errorMessage = null;
-            return error;
+            string? errorMessage = Request.Cookies["errorMessage"];
+            Response.Cookies.Delete("errorMessage");
+            return errorMessage;
         }
 
         public IActionResult Index()
@@ -32,7 +38,8 @@ namespace RotterdamDetectives_Presentation.Controllers
             playerModel.OwnStation = player?.CurrentStation?.Name ?? "";
             playerModel.ConnectedStations = player?.CurrentStation?.Connections ?? new List<IConnection>();
             playerModel.Stations = logic.GetStationsWithPlayers();
-            playerModel.TicketAmounts = player?.Tickets.GroupBy(t => t.ModeOfTransport).Select(g => new TicketAmount(g.Key, g.Count())).ToList() ?? new(); 
+            playerModel.TicketAmounts = player?.Tickets.GroupBy(t => t.ModeOfTransport).Select(g => new TicketAmount(g.Key, g.Count())).ToList() ?? new();
+            playerModel.TicketHistory = player?.TicketHistory ?? new List<ITicket>();
             playerModel.ErrorMessage = GetError();
             return View(playerModel);
         }
@@ -61,8 +68,9 @@ namespace RotterdamDetectives_Presentation.Controllers
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
             var model = new GameViewModel();
-            model.GameMaster = logic.GetPlayer(Request.Cookies["username"]!)?.GameMaster?.Name ?? "";
-            model.Players = logic.GetPlayersInGameWith(model.GameMaster).Select(p => p.Name).ToList();
+            model.GameMaster = logic.GetPlayer(Request.Cookies["username"]!)?.GameMaster?.Name;
+            if (model.GameMaster != null)
+                model.Players = logic.GetPlayersInGameWith(model.GameMaster).Select(p => p.Name).ToList();
             model.ErrorMessage = GetError();
             return View(model);
         }

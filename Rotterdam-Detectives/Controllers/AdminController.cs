@@ -16,11 +16,11 @@ namespace RotterdamDetectives_Presentation.Controllers
         public IActionResult Index()
         {
             if (Request.Query["Password"] == "TestAdmin")
-                Response.Cookies.Append("Password", "TestAdmin");
+                Response.Cookies.Append("Admin-Password", "TestAdmin");
             else if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
             if (Request.Query.ContainsKey("Logout"))
-                Response.Cookies.Delete("Password");
+                Response.Cookies.Delete("Admin-Password");
 
             AdminViewModel model = new AdminViewModel();
             model.Stations = admin.GetStations();
@@ -87,7 +87,7 @@ namespace RotterdamDetectives_Presentation.Controllers
 
         bool LoggedIn()
         {
-            return Request.Cookies["Password"] == "TestAdmin";
+            return Request.Cookies["Admin-Password"] == "TestAdmin";
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

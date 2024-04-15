@@ -45,6 +45,7 @@ namespace RotterdamDetectives_Logic
 
             var passwordHash = passwordHasher.HashPassword(name, password);
             var player = new Player(name, passwordHash, firstStation);
+            player.AddStartTickets();
             players.Add(player);
 
             return Result.Ok();
@@ -68,8 +69,7 @@ namespace RotterdamDetectives_Logic
             var stationToMove = stations.FirstOrDefault(s => s.Name == station);
             if (player == null || stationToMove == null)
                 return Result.Err("Player or station does not exist");
-            player.MoveToStation(stationToMove, modeOfTransport);
-            return Result.Ok();
+            return player.MoveToStation(stationToMove, modeOfTransport);
         }
 
         public IReadOnlyList<IStationWithPlayers> GetStationsWithPlayers()

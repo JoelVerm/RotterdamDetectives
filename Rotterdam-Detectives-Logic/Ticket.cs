@@ -10,5 +10,10 @@ namespace RotterdamDetectives_Logic
     internal class Ticket: ITicket
     {
         public ModeOfTransport ModeOfTransport { get; private set; }
+
+        public Ticket(ModeOfTransport modeOfTransport)
+        {
+            ModeOfTransport = modeOfTransport;
+        }
     }
 }

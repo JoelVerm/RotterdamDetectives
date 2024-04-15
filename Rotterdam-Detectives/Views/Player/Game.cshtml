@@ -5,6 +5,12 @@
 @model GameViewModel
 
 <div class="container">
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="row mb-3 alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
     <div class="row mb-3">
         <div class="col">
             @if (Model.GameMaster != null)
@@ -29,10 +35,4 @@
             }
         </div>
     </div>
-    @if (Model.ErrorMessage != null)
-	{
-		<div class="row mb-3 alert alert-danger" role="alert">
-			@Model.ErrorMessage
-		</div>
-	}
 </div>
