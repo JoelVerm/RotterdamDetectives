@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_LogicInterface
 {
-    public interface ITicket
+    public enum ModeOfTransport
     {
-        public ModeOfTransport ModeOfTransport { get; }
+        Train,
+        Metro,
+        Tram,
+        Bus,
+        Walking
     }
 }

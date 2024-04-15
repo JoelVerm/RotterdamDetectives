@@ -7,15 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-Presen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-Test", "Rotterdam-Detectives-Test\Rotterdam-Detectives-Test.csproj", "{DF9DD8C8-6AFD-4C9E-85E8-66DD1794A9BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-Main", "Rotterdam-Detectives-Main\Rotterdam-Detectives-Main.csproj", "{64EFE455-16CE-46C6-B14B-C2E11DA6616B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-Main", "Rotterdam-Detectives-Main\Rotterdam-Detectives-Main.csproj", "{64EFE455-16CE-46C6-B14B-C2E11DA6616B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-Data", "Rotterdam-Detectives-Data\Rotterdam-Detectives-Data.csproj", "{34A7D8FC-F41B-40F9-8FA5-6CAD32C2CEE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-Data", "Rotterdam-Detectives-Data\Rotterdam-Detectives-Data.csproj", "{34A7D8FC-F41B-40F9-8FA5-6CAD32C2CEE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-Logic", "Rotterdam-Detectives-Logic\Rotterdam-Detectives-Logic.csproj", "{7B0C0EB5-915E-4F28-B925-6E07E4D2F970}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-Logic", "Rotterdam-Detectives-Logic\Rotterdam-Detectives-Logic.csproj", "{7B0C0EB5-915E-4F28-B925-6E07E4D2F970}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-LogicInterface", "Rotterdam-Detectives-LogicInterface\Rotterdam-Detectives-LogicInterface.csproj", "{EAAD0CE2-9C36-4AA8-A000-4D29BEBF1782}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-LogicInterface", "Rotterdam-Detectives-LogicInterface\Rotterdam-Detectives-LogicInterface.csproj", "{EAAD0CE2-9C36-4AA8-A000-4D29BEBF1782}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-DataInterface", "Rotterdam-Detectives-DataInterface\Rotterdam-Detectives-DataInterface.csproj", "{C3E3F788-7681-4F0D-901B-E7ECCBA406AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rotterdam-Detectives-DataInterface", "Rotterdam-Detectives-DataInterface\Rotterdam-Detectives-DataInterface.csproj", "{C3E3F788-7681-4F0D-901B-E7ECCBA406AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rotterdam-Detectives-Globals", "Rotterdam-Detectives-Globals\Rotterdam-Detectives-Globals.csproj", "{03998B41-40FB-4584-B65B-A55C21978E1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{C3E3F788-7681-4F0D-901B-E7ECCBA406AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3E3F788-7681-4F0D-901B-E7ECCBA406AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3E3F788-7681-4F0D-901B-E7ECCBA406AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03998B41-40FB-4584-B65B-A55C21978E1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03998B41-40FB-4584-B65B-A55C21978E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03998B41-40FB-4584-B65B-A55C21978E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03998B41-40FB-4584-B65B-A55C21978E1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

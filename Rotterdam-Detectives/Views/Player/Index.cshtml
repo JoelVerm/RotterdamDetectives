@@ -10,15 +10,15 @@
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
-                    <div class="list-group-item @if (station.Name == Model.OwnStation) {<text>active</text>}">
-                        <h4>@station.Name</h4>
+                    <div class="list-group-item @if (station.Station.Name == Model.OwnStation) {<text>active</text>}">
+                        <h4>@station.Station.Name</h4>
                         <p>
-                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Name} ({cs.TransportType})")).OrDefault("None") <br />
-                            Players: @string.Join(", ", station.Players).OrDefault("None")
+                            Connected to: @string.Join(", ", station.Station.Connections.Select(cs => $"{cs.Destination.Name} ({cs.ModeOfTransport})")).OrDefault("None") <br />
+                            Players: @string.Join(", ", station.Players.Select(p => p.Name)).OrDefault("None")
                         </p>
-                        @foreach (var conn in Model.ConnectedStations.FindAll(cs => cs.Name == station.Name))
+                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination.Name == station.Station.Name))
                         {
-                            <a href="/Player/MoveStation?Station=@station.Name&TransportType=@conn.TransportType" class="btn btn-primary">Move here by @conn.TransportType</a>
+                            <a href="/Player/MoveStation?Station=@station.Station.Name&TransportType=@conn.ModeOfTransport" class="btn btn-primary">Move here by @conn.ModeOfTransport</a>
                         }
                     </div>
                 }
@@ -26,10 +26,10 @@
         </div>
 		<div class="col">
             <div class="list-group">
-                @foreach (var ticket in Model.Tickets)
+                @foreach (var ticket in Model.TicketAmounts)
                 {
                     <div class="list-group-item">
-                        <h4>@ticket.Name</h4>
+                        <h4>@ticket.ModeOfTransport</h4>
 						<p>
 							Amount: @ticket.Amount
 						</p>

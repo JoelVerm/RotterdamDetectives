@@ -9,7 +9,12 @@ namespace RotterdamDetectives_LogicInterface
     public interface IStation
     {
         public string Name { get; }
-        public List<string> Players { get; }
-        public List<IStationConnection> Connections { get; }
+        public int Latitude { get; }
+        public int Longitude { get; }
+        public IReadOnlyList<IConnection> Connections { get; }
+
+        public IReadOnlyList<IConnection> GetConnectionsTo(IStation station);
+
+        public void SetCoordinates(int latitude, int longitude);
     }
 }

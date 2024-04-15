@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace RotterdamDetectives_LogicInterface
 {
-    public interface IStationConnection
+    public interface IStationWithPlayers
     {
-        public string Name { get; }
-        public string TransportType { get; }
+        IStation Station { get; }
+        IReadOnlyList<IPlayer> Players { get; }
     }
 }

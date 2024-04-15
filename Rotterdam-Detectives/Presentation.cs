@@ -6,11 +6,11 @@ namespace RotterdamDetectives_Presentation
 {
     public class Presentation
     {
-        private IProcessedDataSource _processedDataSource;
+        private ILogic logic;
 
-        public Presentation(IProcessedDataSource processedDataSource)
+        public Presentation(ILogic _logic)
         {
-            _processedDataSource = processedDataSource;
+            logic = _logic;
         }
 
         public void Start() {
@@ -21,7 +21,7 @@ namespace RotterdamDetectives_Presentation
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton(_processedDataSource);
+            builder.Services.AddSingleton(logic);
 
             var app = builder.Build();
 

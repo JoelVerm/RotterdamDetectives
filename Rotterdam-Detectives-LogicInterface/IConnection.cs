@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_LogicInterface
 {
-    public interface ITicket
+    public interface IConnection
     {
         public ModeOfTransport ModeOfTransport { get; }
+        public IStation Destination { get; }
     }
 }

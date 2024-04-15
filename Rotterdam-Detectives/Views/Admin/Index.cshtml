@@ -2,4 +2,44 @@
     ViewData["Title"] = "Admin";
 }
 
-<h1>Admin</h1>
+@model AdminViewModel
+
+<div class="container">
+    <h1>Admin</h1>
+    <div class="row mb-3">
+        <div class="col">
+            <div class="list-group">
+                @foreach(var station in Model.Stations)
+                {
+                    <div class="list-group-item">
+                        <div class="row d-flex">
+                            <div class="col">@station.Name</div>
+                            <a class="btn btn-primary col ms-2" href="/Admin/ConnectStations?Name=@station.Name">Connect</a>
+                            <a class="btn btn-primary col ms-2" href="/Admin/DeleteStation?Name=@station.Name">Delete</a>
+                        </div>
+						<div class="row d-flex list-group mt-2">
+                            @foreach(var conn in station.Connections)
+                            {
+                                <div class="list-group-item d-flex">
+                                    <div class="col">@conn.Destination.Name (@conn.ModeOfTransport)</div>
+                                    <a class="btn btn-secondary col ms-2" href="/Admin/DisconnectStations?From=@station.Name&To=@conn.Destination.Name">Delete</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <form class="form row" method="post" action="/Admin/AddStation">
+                <label for="addStation" class="form-label">Add station</label>
+                <input type="text" class="form-control" id="addStation" name="addStation" placeholder="Station name">
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+    </div>
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="row mb-3 alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+</div>

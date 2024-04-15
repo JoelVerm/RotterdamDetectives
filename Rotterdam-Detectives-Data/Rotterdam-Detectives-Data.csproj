@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rotterdam-Detectives-DataInterface\Rotterdam-Detectives-DataInterface.csproj" />
+    <ProjectReference Include="..\Rotterdam-Detectives-Globals\Rotterdam-Detectives-Globals.csproj" />
   </ItemGroup>
 
 </Project>

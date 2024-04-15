@@ -7,18 +7,16 @@ namespace RotterdamDetectives_Presentation.Controllers
 {
     public class HomeController : Controller
     {
-        IProcessedDataSource dataSource;
+        ILogic logic;
 
-        public HomeController(IProcessedDataSource _dataSource) {
-            dataSource = _dataSource;
+        public HomeController(ILogic _logic) {
+            logic = _logic;
         }
 
         public IActionResult Index()
         {
             if (!LoggedIn())
                 return RedirectToAction("Login");
-            if (dataSource.IsAdmin(Request.Cookies["username"]!))
-                return RedirectToAction("Index", "Admin");
             return RedirectToAction("Index", "Player");
         }
 
@@ -30,7 +28,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         [HttpPost]
         public IActionResult Login(LoginViewModel viewModel)
         {
-            if (!dataSource.LoginUser(viewModel.Username, viewModel.Password))
+            if (!logic.LoginPlayer(viewModel.Username, viewModel.Password).IsOk)
                 return View(new LoginViewModel("Invalid username or password"));
             Response.Cookies.Append("username", viewModel.Username);
             Response.Cookies.Append("password", viewModel.Password);
@@ -45,11 +43,13 @@ namespace RotterdamDetectives_Presentation.Controllers
         [HttpPost]
         public IActionResult Register(RegisterViewModel viewModel)
         {
-            if (dataSource.UserExists(viewModel.Username))
+            if (logic.GetPlayer(viewModel.Username) != null)
                 return View(new RegisterViewModel("User already exists"));
             if (viewModel.Password != viewModel.ConfirmPassword)
                 return View(new RegisterViewModel("Passwords do not match"));
-            dataSource.RegisterUser(viewModel.Username, viewModel.Password);
+            var result = logic.RegisterPlayer(viewModel.Username, viewModel.Password);
+            if (!result.IsOk)
+                return View(new RegisterViewModel(result.Error));
             Response.Cookies.Append("username", viewModel.Username);
             Response.Cookies.Append("password", viewModel.Password);
             return RedirectToAction("Index");
@@ -66,7 +66,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (Request.Cookies["username"] == null || Request.Cookies["password"] == null)
                 return false;
-            return dataSource.LoginUser(Request.Cookies["username"] ?? "", Request.Cookies["password"] ?? "");
+            return logic.LoginPlayer(Request.Cookies["username"] ?? "", Request.Cookies["password"] ?? "").IsOk;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

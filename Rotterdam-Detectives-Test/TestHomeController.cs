@@ -10,8 +10,7 @@ namespace RotterdamDetectives_Test
         public void TestIndex()
         {
             // Arrange
-            var processedDataSource = new MockProcessedDataSource();
-            processedDataSource.ShouldReturnLoggedinUser = true;
+            var processedDataSource = new MockLogic();
 
             var controller = new HomeController(processedDataSource);
 

@@ -7,7 +7,7 @@ var data = new DataSource("Server=(localdb)\\MSSQLLocalDB;Database=RotterdamDete
 
 var passwordHasher = new PasswordHasher();
 
-var logic = new ProcessedDataSource(data, passwordHasher);
+var logic = new Logic(data, passwordHasher);
 
 var presentation = new Presentation(logic);
 presentation.Start();

@@ -5,12 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RotterdamDetectives_Logic.Interface
+namespace RotterdamDetectives_Logic
 {
-    internal class Ticket : ITicket
+    internal class Ticket: ITicket
     {
-        public string Name { get; set; }
-
-        public int Amount { get; set; }
+        public ModeOfTransport ModeOfTransport { get; private set; }
     }
 }
