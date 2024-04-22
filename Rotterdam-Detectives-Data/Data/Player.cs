@@ -10,8 +10,8 @@ namespace RotterdamDetectives_Data.Data
     internal class Player
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string PasswordHash { get; set; }
+        public string Name { get; set; } = "";
+        public string PasswordHash { get; set; } = "";
         public int GameMode { get; set; }
         public bool IsAdmin { get; set; }
         public int? StationId { get; set; } = null;

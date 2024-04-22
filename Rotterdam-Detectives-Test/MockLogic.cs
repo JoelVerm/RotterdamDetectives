@@ -14,6 +14,8 @@ namespace RotterdamDetectives_Test
 
         public IReadOnlyList<IStation> Stations => throw new NotImplementedException();
 
+        public IAdminController AdminController => throw new NotImplementedException();
+
         public IPlayer? GetPlayer(string name) => throw new NotImplementedException();
 
         public Result RegisterPlayer(string name, string password) => throw new NotImplementedException();

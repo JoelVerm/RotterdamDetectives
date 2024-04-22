@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Data.Interface
 {
-    internal class ConnectedStation : IConnectedStation
+    internal class ConnectedStation(IStationData station, string transportType) : IConnectedStation
     {
-        public IStationData Station { get; set; }
-        public string TransportType { get; set; }
+        public IStationData Station { get; set; } = station;
+        public string TransportType { get; set; } = transportType;
     }
 }

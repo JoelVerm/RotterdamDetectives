@@ -69,7 +69,9 @@ namespace RotterdamDetectives_Presentation.Controllers
                 return RedirectToAction("Login", "Home");
             var model = new GameViewModel();
             model.GameMaster = logic.GetPlayer(Request.Cookies["username"]!)?.GameMaster?.Name;
-            if (model.GameMaster != null)
+            if (model.GameMaster == null)
+                model.Players = logic.GetPlayersInGameWith(Request.Cookies["username"]!).Select(p => p.Name).ToList();
+            else
                 model.Players = logic.GetPlayersInGameWith(model.GameMaster).Select(p => p.Name).ToList();
             model.ErrorMessage = GetError();
             return View(model);

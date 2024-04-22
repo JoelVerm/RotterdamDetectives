@@ -3,14 +3,9 @@ using System.Diagnostics;
 
 namespace RotterdamDetectives_Data
 {
-    public class DataSource : IDataSource
+    public class DataSource(string connectionString) : IDataSource
     {
-        DB DB;
-
-        public DataSource(string connectionString)
-        {
-            DB = new(connectionString);
-        }
+        readonly DB DB = new(connectionString);
 
         public bool AddPlayer(string name, string passwordHash)
         {
@@ -109,7 +104,7 @@ namespace RotterdamDetectives_Data
             var connections = DB.Rows("SELECT * FROM Connections WHERE [From] = @From", new Data.Connection { From = stationId });
             if (connections == null)
                 return null;
-            List<IConnectedStation> connectedStations = new();
+            List<IConnectedStation> connectedStations = [];
             foreach (var connection in connections)
             {
                 var station = DB.Rows("SELECT * FROM Stations WHERE Id = @Id", new Data.Station { Id = connection.To })?.FirstOrDefault();
@@ -118,7 +113,7 @@ namespace RotterdamDetectives_Data
                 var transportType = DB.Rows("SELECT * FROM TransportTypes WHERE Id = @Id", new Data.TransportType { Id = connection.TransportTypeId })?.FirstOrDefault();
                 if (transportType == null)
                     continue;
-                connectedStations.Add(new Interface.ConnectedStation { Station = station, TransportType = transportType.Name });
+                connectedStations.Add(new Interface.ConnectedStation(station, transportType.Name));
             }
             return connectedStations;
         }

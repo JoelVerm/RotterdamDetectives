@@ -2,7 +2,7 @@
 {
     public class ConnectStationsViewModel
     {
-        public string StationName { get; set; }
-        public List<string> AllStations { get; set; }
+        public string StationName { get; set; } = "";
+        public List<string> AllStations { get; set; } = [];
     }
 }

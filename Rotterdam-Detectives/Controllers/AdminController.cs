@@ -5,13 +5,9 @@ using RotterdamDetectives_LogicInterface;
 
 namespace RotterdamDetectives_Presentation.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController(ILogic _logic) : Controller
     {
-        IAdminController admin;
-
-        public AdminController(ILogic _logic) {
-            admin = _logic.AdminController;
-        }
+        readonly IAdminController admin = _logic.AdminController;
 
         public IActionResult Index()
         {
@@ -22,8 +18,10 @@ namespace RotterdamDetectives_Presentation.Controllers
             if (Request.Query.ContainsKey("Logout"))
                 Response.Cookies.Delete("Admin-Password");
 
-            AdminViewModel model = new AdminViewModel();
-            model.Stations = admin.GetStations();
+            AdminViewModel model = new()
+            {
+                Stations = admin.GetStations()
+            };
             return View(model);
         }
 
@@ -54,9 +52,11 @@ namespace RotterdamDetectives_Presentation.Controllers
             if (!string.IsNullOrEmpty(connectStation))
             {
                 Response.Cookies.Append("ConnectStation", connectStation!);
-                var model = new ConnectStationsViewModel();
-                model.StationName = connectStation;
-                model.AllStations = admin.GetStations().Select(e => e.Name).ToList();
+                var model = new ConnectStationsViewModel
+                {
+                    StationName = connectStation,
+                    AllStations = admin.GetStations().Select(e => e.Name).ToList()
+                };
                 return View(model);
             }
             return RedirectToAction("Index");
