@@ -101,7 +101,7 @@ namespace RotterdamDetectives_Logic
                 return Result.Err("Player does not exist");
             if (gameMaster.GameMaster != null)
                 return Result.Err("Player is not a game master");
-            var playersInGame = players.Where(p => p.GameMaster == gameMaster).ToList();
+            var playersInGame = players.Where(p => p.GameMaster == gameMaster || p == gameMaster).ToList();
             if (playersInGame.Count < 2)
                 return Result.Err("Not enough players in the game");
             foreach (var p in playersInGame)
