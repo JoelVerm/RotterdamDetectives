@@ -26,20 +26,16 @@ namespace RotterdamDetectives_Globals
         public static Result<TValue, TError> Err(TError error) => new Result<TValue, TError>(false, default, error);
     }
 
-    public class Result<TValue> : Result<TValue, string>
+    public class Result<TValue>(bool ok, TValue? value, string? error) : Result<TValue, string>(ok, value, error)
     {
-        public Result(bool ok, TValue? value, string? error) : base(ok, value, error) { }
-
         public static implicit operator Result<TValue>(TValue value) => Ok(value);
 
         public static new Result<TValue> Ok(TValue value) => new Result<TValue>(true, value, null);
         public static new Result<TValue> Err(string error) => new Result<TValue>(false, default, error);
     }
 
-    public class Result : Result<bool?>
+    public class Result(bool ok, string? error) : Result<bool?>(ok, null, error)
     {
-        public Result(bool ok, string? error) : base(ok, null, error) { }
-
         public static Result Ok() => new Result(true, null);
         public static new Result Err(string error) => new Result(false, error);
     }

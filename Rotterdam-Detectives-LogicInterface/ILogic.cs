@@ -18,9 +18,11 @@ namespace RotterdamDetectives_LogicInterface
         public Result RegisterPlayer(string name, string password);
         public Result LoginPlayer(string name, string password);
         public Result MovePlayerToStation(string name, string station, ModeOfTransport modeOfTransport);
-        public IReadOnlyList<IStationWithPlayers> GetStationsWithPlayers();
+        public IReadOnlyList<IStationWithPlayers> GetStationsWithPlayers(string playerName);
         public IReadOnlyList<IPlayer> GetPlayersInGameWith(string gameMaster);
-        public Result SetGameMaster(string name, string gameMasterName);
+        public Result CreateGame(string gameMasterName);
+        public Result JoinGame(string name, string gameMasterName);
+        public Result LeaveGame(string name);
         public Result StartGame(string gameMasterName);
         public Result EndGame(string gameMasterName);
     }

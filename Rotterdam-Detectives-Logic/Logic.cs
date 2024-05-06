@@ -14,12 +14,13 @@ namespace RotterdamDetectives_Logic
         private readonly IDataSource dataSource;
         private readonly IPasswordHasher passwordHasher;
 
-        internal List<Player> players = new();
+        private readonly List<Player> players = [];
         public IReadOnlyList<IPlayer> Players => players;
-        internal List<Station> stations = new();
+        private readonly List<Station> stations = [];
+        internal List<Station> AdminStations => stations;
         public IReadOnlyList<IStation> Stations => stations;
 
-        internal AdminController adminController;
+        private readonly AdminController adminController;
         public IAdminController AdminController => adminController;
 
         public Logic(IDataSource _dataSource, IPasswordHasher _passwordHasher)
@@ -72,17 +73,29 @@ namespace RotterdamDetectives_Logic
             return player.MoveToStation(stationToMove, modeOfTransport);
         }
 
-        public IReadOnlyList<IStationWithPlayers> GetStationsWithPlayers()
+        public IReadOnlyList<IStationWithPlayers> GetStationsWithPlayers(string playerName)
         {
-            return stations.Select(s => new StationWithPlayers(s, players.Where(p => p.CurrentStation == s).ToList())).ToList();
+            var player = players.FirstOrDefault(p => p.Name == playerName);
+            return stations.Select(s => new StationWithPlayers(s, players.Where(p => p.Game == player?.Game && p.CurrentStation == s).ToList())).ToList();
         }
 
         public IReadOnlyList<IPlayer> GetPlayersInGameWith(string gameMaster)
         {
-            return players.Where(p => p.GameMaster?.Name == gameMaster).ToList();
+            return players.Where(p => (p.Game?.GameMaster.Name) == gameMaster).ToList();
         }
 
-        public Result SetGameMaster(string name, string gameMasterName)
+        public Result CreateGame(string gameMasterName)
+        {
+            var gameMaster = players.FirstOrDefault(p => p.Name == gameMasterName);
+            if (gameMaster == null)
+                return Result.Err("Player does not exist");
+            if (gameMaster.Game != null)
+                return Result.Err("Player is already in a game");
+            gameMaster.game = new Game(gameMaster);
+            return Result.Ok();
+        }
+
+        public Result JoinGame(string name, string gameMasterName)
         {
             var player = players.FirstOrDefault(p => p.Name == name);
             if (player == null)
@@ -90,7 +103,24 @@ namespace RotterdamDetectives_Logic
             var gameMaster = players.FirstOrDefault(p => p.Name == gameMasterName);
             if (gameMaster == null)
                 return Result.Err("Game master does not exist");
-            player.gameMaster = gameMaster;
+            var game = gameMaster.game;
+            if (game == null)
+                return Result.Err("Game does not exist");
+            if (player.game != null)
+                return Result.Err("Player is already in a game");
+            return game.AddPlayer(player);
+        }
+
+        public Result LeaveGame(string name)
+        {
+            var player = players.FirstOrDefault(p => p.Name == name);
+            if (player == null)
+                return Result.Err("Player does not exist");
+            var game = player.game;
+            if (game == null)
+                return Result.Err("Player is not in a game");
+            player.game = null;
+            game.RemovePlayer(player);
             return Result.Ok();
         }
 
@@ -98,15 +128,10 @@ namespace RotterdamDetectives_Logic
         {
             var gameMaster = players.FirstOrDefault(p => p.Name == gameMasterName);
             if (gameMaster == null)
-                return Result.Err("Player does not exist");
-            if (gameMaster.GameMaster != null)
+                return Result.Err("Game master does not exist");
+            if (gameMaster.game?.GameMaster != gameMaster)
                 return Result.Err("Player is not a game master");
-            var playersInGame = players.Where(p => p.GameMaster == gameMaster || p == gameMaster).ToList();
-            if (playersInGame.Count < 2)
-                return Result.Err("Not enough players in the game");
-            foreach (var p in playersInGame)
-                p.ResetTickets();
-            return Result.Ok();
+            return gameMaster.game.Start();
         }
 
         public Result EndGame(string gameMasterName)
@@ -114,11 +139,12 @@ namespace RotterdamDetectives_Logic
             var gameMaster = players.FirstOrDefault(p => p.Name == gameMasterName);
             if (gameMaster == null)
                 return Result.Err("Player does not exist");
-            if (gameMaster.GameMaster != null)
+            var game = gameMaster.game;
+            if (game == null)
+                return Result.Err("Player is not in a game");
+            if (game.GameMaster != gameMaster)
                 return Result.Err("Player is not a game master");
-            var playersInGame = players.Where(p => p.GameMaster == gameMaster).ToList();
-            foreach (var p in playersInGame)
-                p.ResetGameMaster();
+            game.End();
             return Result.Ok();
         }
     }

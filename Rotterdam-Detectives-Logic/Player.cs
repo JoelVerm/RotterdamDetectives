@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Player: IPlayer
+    internal class Player(string name, string password, Station station) : IPlayer
     {
         private static readonly Dictionary<ModeOfTransport, int> startTicketAmounts = new()
         {
@@ -19,24 +19,17 @@ namespace RotterdamDetectives_Logic
             { ModeOfTransport.Walking, 8 }
         };
 
-        public string Name { get; private set; }
-        internal string Password { get; private set; }
+        public string Name { get; private set; } = name;
+        internal string Password { get; private set; } = password;
         public bool IsMrX { get; private set; }
-        internal Player? gameMaster;
-        public IPlayer? GameMaster => gameMaster;
-        internal List<Ticket> tickets = new();
+        internal Game? game;
+        public IGame? Game => game;
+        private readonly List<Ticket> tickets = [];
         public IReadOnlyList<ITicket> Tickets => tickets;
-        internal List<Ticket> ticketHistory = new();
+        private readonly List<Ticket> ticketHistory = [];
         public IReadOnlyList<ITicket> TicketHistory => ticketHistory;
-        internal Station currentStation;
+        private Station currentStation = station;
         public IStation CurrentStation => currentStation;
-
-        public Player(string name, string password, Station station)
-        {
-            Name = name;
-            Password = password;
-            currentStation = station;
-        }
 
         internal Result MoveToStation(Station station, ModeOfTransport modeOfTransport)
         {
@@ -66,12 +59,10 @@ namespace RotterdamDetectives_Logic
                     tickets.Add(new Ticket(type));
         }
 
-        public void ResetTickets()
+        internal void ResetTickets()
         {
             tickets.AddRange(ticketHistory);
             ticketHistory.Clear();
         }
-
-        public void ResetGameMaster() => gameMaster = null;
     }
 }

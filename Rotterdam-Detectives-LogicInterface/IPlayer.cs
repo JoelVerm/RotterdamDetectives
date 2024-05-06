@@ -11,12 +11,9 @@ namespace RotterdamDetectives_LogicInterface
     {
         public string Name { get; }
         public bool IsMrX { get; }
-        public IPlayer? GameMaster { get; }
+        public IGame? Game { get; }
         public IReadOnlyList<ITicket> Tickets { get; }
         public IReadOnlyList<ITicket> TicketHistory { get; }
         public IStation CurrentStation { get; }
-
-        public void ResetTickets();
-        public void ResetGameMaster();
     }
 }

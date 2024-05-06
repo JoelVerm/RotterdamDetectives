@@ -7,7 +7,7 @@ namespace RotterdamDetectives_Data
 {
     internal class DB
     {
-        SqlConnection db;
+        readonly SqlConnection db;
 
         public string LastQuery { get; private set; } = "";
         public string LastError { get; private set; } = "";
@@ -78,7 +78,7 @@ namespace RotterdamDetectives_Data
             try
             {
                 using SqlDataReader reader = cmd.ExecuteReader();
-                List<Out> list = new();
+                List<Out> list = [];
                 foreach (DbDataRecord item in reader)
                 {
                     Debug.WriteLine(item);

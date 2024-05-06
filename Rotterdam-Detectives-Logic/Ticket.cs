@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Ticket: ITicket
+    internal class Ticket(ModeOfTransport modeOfTransport) : ITicket
     {
-        public ModeOfTransport ModeOfTransport { get; private set; }
-
-        public Ticket(ModeOfTransport modeOfTransport)
-        {
-            ModeOfTransport = modeOfTransport;
-        }
+        public ModeOfTransport ModeOfTransport { get; private set; } = modeOfTransport;
     }
 }

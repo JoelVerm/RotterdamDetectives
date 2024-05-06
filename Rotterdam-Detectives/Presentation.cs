@@ -4,14 +4,9 @@ using System.Diagnostics;
 
 namespace RotterdamDetectives_Presentation
 {
-    public class Presentation
+    public class Presentation(ILogic _logic)
     {
-        private ILogic logic;
-
-        public Presentation(ILogic _logic)
-        {
-            logic = _logic;
-        }
+        private readonly ILogic logic = _logic;
 
         public void Start() {
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);

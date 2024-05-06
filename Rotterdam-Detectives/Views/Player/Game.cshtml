@@ -13,25 +13,35 @@
     }
     <div class="row mb-3">
         <div class="col">
-            @if (Model.GameMaster != null)
+            @if (Model.IsGameMaster)
             {
-                <h2>Joined game</h2>
+                <h2>Game master</h2>
+				<p>Players: @string.Join(", ", Model.Players)</p>
+                <p>Game status: @if (Model.IsStarted) { <text>Started</text> } else { <text>Paused</text> }</p>
+                <a class="btn btn-primary" href="/Player/StartGame">Start or reset game</a>
+                @if (Model.IsStarted)
+				{
+                    <a class="btn btn-primary" href="/Player/EndGame">End game</a>
+				}
+            }
+            else if (Model.GameMaster != null)
+			{
+				<h2>Joined game</h2>
                 <p>Game master: @Model.GameMaster</p>
                 <p>Players: @string.Join(", ", Model.Players)</p>
+                <p>Game status: @if (Model.IsStarted) { <text>Started</text> } else { <text>Paused</text> }</p>
                 <a class="btn btn-secondary" href="/Player/LeaveGame">Leave game</a>
-            }
-            else
-            {
-                <h2>Host a game</h2>
-                <p>Players: @string.Join(", ", Model.Players)</p>
-                <form method="post" action="AddPlayerToGame" class="form row mb-3">
+			}
+			else
+			{
+                <h2>No active game</h2>
+                <a class="btn btn-primary" href="/Player/CreateGame">Create game</a>
+                <form method="post" action="JoinGame" class="form row mb-3">
                     <div class="form-group col">
-                        <input type="text" class="form-control" id="playerName" name="playerName" placeholder="Enter player to add to your game" />
+                        <input type="text" class="form-control" id="gameMasterName" name="gameMasterName" placeholder="Enter game master" />
                     </div>
-                    <button type="submit" class="btn btn-primary col flex-grow-0 text-nowrap">Add player</button>
+                    <button type="submit" class="btn btn-primary col flex-grow-0 text-nowrap">Join game</button>
                 </form>
-                <a class="btn btn-primary" href="/Player/StartGame">Start or reset game</a>
-                <a class="btn btn-primary" href="/Player/EndGame">End game</a>
             }
         </div>
     </div>

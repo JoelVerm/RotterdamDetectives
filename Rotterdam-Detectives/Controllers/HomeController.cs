@@ -5,13 +5,9 @@ using RotterdamDetectives_LogicInterface;
 
 namespace RotterdamDetectives_Presentation.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ILogic _logic) : Controller
     {
-        ILogic logic;
-
-        public HomeController(ILogic _logic) {
-            logic = _logic;
-        }
+        readonly ILogic logic = _logic;
 
         public IActionResult Index()
         {
