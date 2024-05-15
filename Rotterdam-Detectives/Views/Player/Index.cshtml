@@ -17,15 +17,15 @@
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
-                    <div class="list-group-item @if (station.Station.Name == Model.OwnStation) {<text>active</text>}">
-                        <h4>@station.Station.Name</h4>
+                    <div class="list-group-item @if (station.Station == Model.OwnStation) {<text>active</text>}">
+                        <h4>@station.Station</h4>
                         <p>
-                            Connected to: @string.Join(", ", station.Station.Connections.Select(cs => $"{cs.Destination.Name} ({cs.ModeOfTransport})")).OrDefault("None") <br />
-                            Players: @string.Join(", ", station.Players.Select(p => p.Name)).OrDefault("None")
+                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Destination} ({cs.ModeOfTransport})")).OrDefault("None") <br />
+                            Players: @string.Join(", ", station.Players).OrDefault("None")
                         </p>
-                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination.Name == station.Station.Name))
+                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station))
                         {
-                            <a href="/Player/MoveStation?Station=@station.Station.Name&TransportType=@conn.ModeOfTransport" class="btn btn-primary">Move here by @conn.ModeOfTransport</a>
+                            <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary">Move here by @conn.ModeOfTransport</a>
                         }
                     </div>
                 }
@@ -37,9 +37,9 @@
                 @foreach (var ticket in Model.TicketAmounts)
                 {
                     <div class="list-group-item">
-                        <h4>@ticket.ModeOfTransport</h4>
+                        <h4>@ticket.Key</h4>
                         <span>
-                            Amount: @ticket.Amount
+                            Amount: @ticket.Value
                         </span>
                     </div>
                 }
@@ -51,7 +51,7 @@
                 @foreach (var ticket in Model.TicketHistory)
                 {
                     <div class="list-group-item">
-                        <span>@ticket.ModeOfTransport</span>
+                        <span>@ticket</span>
                     </div>
                 }
             </div>

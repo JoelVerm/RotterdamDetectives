@@ -4,10 +4,8 @@ using System.Diagnostics;
 
 namespace RotterdamDetectives_Presentation
 {
-    public class Presentation(ILogic _logic)
+    public class Presentation(IGame game, IPlayer player, IStation station, ITicket ticket, IAdmin admin)
     {
-        private readonly ILogic logic = _logic;
-
         public void Start() {
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
@@ -16,7 +14,11 @@ namespace RotterdamDetectives_Presentation
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton(logic);
+            builder.Services.AddSingleton(game);
+            builder.Services.AddSingleton(player);
+            builder.Services.AddSingleton(station);
+            builder.Services.AddSingleton(ticket);
+            builder.Services.AddSingleton(admin);
 
             var app = builder.Build();
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_DataInterface
 {
-    public interface IConnectedStation
+    public interface IConnection
     {
-        public IStationData Station { get; }
-        public string TransportType { get; }
+        public string ModeOfTransport { get; }
+        public string Destination { get; }
     }
 }

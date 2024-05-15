@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RotterdamDetectives_DataInterface
+namespace RotterdamDetectives_LogicInterface
 {
-    public interface ITransportType
+    public interface IStationWithConnections
     {
         public string Name { get; }
-        public int MaxTickets { get; }
+        public List<IConnection> Connections { get; }
     }
 }

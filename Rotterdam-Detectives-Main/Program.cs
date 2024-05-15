@@ -3,11 +3,20 @@ using RotterdamDetectives_Data;
 using RotterdamDetectives_Logic;
 using RotterdamDetectives_Main;
 
-var data = new DataSource("Server=(localdb)\\MSSQLLocalDB;Database=RotterdamDetectives;Integrated Security=True;");
+var connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=RotterdamDetectives;Integrated Security=True;";
+
+var gameDB = new GameDB(connectionString);
+var playerDB = new PlayerDB(connectionString);
+var stationDB = new StationDB(connectionString);
+var ticketDB = new TicketDB(connectionString);
 
 var passwordHasher = new PasswordHasher();
 
-var logic = new Logic(data, passwordHasher);
+var ticket = new Ticket(ticketDB);
+var station = new Station(stationDB);
+var game = new Game(gameDB, ticket);
+var player = new Player(playerDB, station, ticket, passwordHasher);
+var admin = new Admin(gameDB, playerDB, stationDB, ticketDB);
 
-var presentation = new Presentation(logic);
+var presentation = new Presentation(game, player, station, ticket, admin);
 presentation.Start();

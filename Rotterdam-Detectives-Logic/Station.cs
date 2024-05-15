@@ -1,5 +1,6 @@
 ﻿using RotterdamDetectives_Globals;
 using RotterdamDetectives_LogicInterface;
+using RotterdamDetectives_DataInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,36 +9,38 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Station(string name) : IStation
+    public class Station(IStationDB db) : IStation
     {
-        public string Name { get; private set; } = name;
-        public int Latitude { get; private set; }
-        public int Longitude { get; private set; }
-        private readonly List<Connection> connections = [];
-        public IReadOnlyList<IConnection> Connections => connections;
-
-        public IReadOnlyList<IConnection> GetConnectionsTo(IStation station)
+        public IReadOnlyList<RotterdamDetectives_LogicInterface.IConnection> GetConnectionsOf(string station)
         {
-            return connections.Where(c => c.Destination == station).ToList();
+            return db.GetConnectionsFrom(station)?.Select(c => new Connection(c.Destination, c.ModeOfTransport)).ToList() ?? [];
         }
 
-        internal Result AddConnection(Station station, ModeOfTransport modeOfTransport)
+        public Result AddConnection(string from, string to, string modeOfTransport)
         {
-            if (connections.Any(c => c.Destination == station))
+            if (db.GetConnectionsFrom(from)?.Any(c => c.Destination == to) ?? false)
                 return Result.Err("Connection already exists");
-            connections.Add(new Connection(station, modeOfTransport));
+            db.AddConnection(from, to, modeOfTransport);
             return Result.Ok();
         }
 
-        internal void RemoveConnections(Station station)
+        public void RemoveConnections(string from, string to)
         {
-            connections.RemoveAll(c => c.Destination == station);
+            db.RemoveConnections(from, to);
         }
 
-        public void SetCoordinates(int latitude, int longitude)
+        public void SetCoordinates(string station, int latitude, int longitude)
         {
-            Latitude = latitude;
-            Longitude = longitude;
+            db.SetCoordinatesOf(station, latitude, longitude);
+        }
+
+        public List<RotterdamDetectives_LogicInterface.IStationWithPlayers> GetWithPlayers()
+        {
+            return db.GetWithPlayers()
+                .Select(s => new StationWithPlayers(s.Station, s.Players,
+                    db.GetConnectionsFrom(s.Station)?.Select(c => new Connection(c.Destination, c.ModeOfTransport)).ToList() ?? []
+                ))
+                .ToList<RotterdamDetectives_LogicInterface.IStationWithPlayers>();
         }
     }
 }

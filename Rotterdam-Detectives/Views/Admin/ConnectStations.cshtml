@@ -17,7 +17,7 @@
                 </select>
                 <label for="transportMode" class="form-label">Transport mode:</label>
                 <select class="form-select" id="transportMode" name="transportMode">
-                    @foreach (var mode in Enum.GetNames(typeof(ModeOfTransport))) {
+                    @foreach (var mode in Model.ModesOfTransport) {
     					<option value="@mode">@mode</option>
                     }
                 </select>

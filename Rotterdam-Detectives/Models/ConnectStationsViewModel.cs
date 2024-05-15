@@ -4,5 +4,6 @@
     {
         public string StationName { get; set; } = "";
         public List<string> AllStations { get; set; } = [];
+        public IReadOnlyList<string> ModesOfTransport = [];
     }
 }

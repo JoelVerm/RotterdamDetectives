@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RotterdamDetectives_Globals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,9 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface ITicket
     {
-        public ModeOfTransport ModeOfTransport { get; }
+        public Result Use(string player, string modeOfTransport);
+        public void ResetTickets(string player);
+        public IReadOnlyDictionary<string, int> GetSpare(string player);
+        public IEnumerable<string> GetHistory(string player);
     }
 }

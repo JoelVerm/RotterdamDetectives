@@ -9,8 +9,13 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface IGame
     {
-        public IPlayer GameMaster { get; }
-        public IReadOnlyList<IPlayer> Players { get; }
-        public bool IsStarted { get; }
+        public string? GameMasterOf(string player);
+        public Result Join(string gameMaster, string player);
+        public Result Leave(string player);
+        public IEnumerable<string> GetPlayers(string gameMaster);
+        public Result Create(string gameMaster);
+        public bool IsStarted(string gameMaster);
+        public Result Start(string gameMaster);
+        public Result End(string gameMaster);
     }
 }

@@ -5,10 +5,8 @@ using RotterdamDetectives_LogicInterface;
 
 namespace RotterdamDetectives_Presentation.Controllers
 {
-    public class AdminController(ILogic _logic) : Controller
+    public class AdminController(IAdmin admin) : Controller
     {
-        readonly IAdminController admin = _logic.AdminController;
-
         public IActionResult Index()
         {
             if (Request.Query["Password"] == "TestAdmin")
@@ -55,7 +53,8 @@ namespace RotterdamDetectives_Presentation.Controllers
                 var model = new ConnectStationsViewModel
                 {
                     StationName = connectStation,
-                    AllStations = admin.GetStations().Select(e => e.Name).ToList()
+                    AllStations = admin.GetStations().Select(e => e.Name).ToList(),
+                    ModesOfTransport = admin.GetModesOfTransport()
                 };
                 return View(model);
             }

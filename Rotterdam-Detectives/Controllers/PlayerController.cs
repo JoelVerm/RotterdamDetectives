@@ -6,10 +6,8 @@ using RotterdamDetectives_Globals;
 
 namespace RotterdamDetectives_Presentation.Controllers
 {
-    public class PlayerController(ILogic _logic) : Controller
+    public class PlayerController(IPlayer player, IStation station, ITicket ticket, IGame game) : Controller
     {
-        readonly ILogic logic = _logic;
-
         private void AddError(string message)
         {
             var errorMessage = Request.Cookies["errorMessage"] ?? "";
@@ -35,14 +33,16 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            var playerModel = new PlayerViewModel();
-            var player = logic.GetPlayer(Request.Cookies["username"]!);
-            playerModel.OwnStation = player?.CurrentStation?.Name ?? "";
-            playerModel.ConnectedStations = player?.CurrentStation?.Connections ?? [];
-            playerModel.Stations = logic.GetStationsWithPlayers(Request.Cookies["username"]!);
-            playerModel.TicketAmounts = player?.Tickets.GroupBy(t => t.ModeOfTransport).Select(g => new TicketAmount(g.Key, g.Count())).ToList() ?? [];
-            playerModel.TicketHistory = player?.TicketHistory ?? [];
-            playerModel.ErrorMessage = GetError();
+            var userName = Request.Cookies["username"]!;
+            var currentStation = player.GetCurrentStation(userName) ?? "";
+            var playerModel = new PlayerViewModel {
+                OwnStation = currentStation,
+                ConnectedStations = station.GetConnectionsOf(currentStation),
+                Stations = station.GetWithPlayers(),
+                TicketAmounts = ticket.GetSpare(userName),
+                TicketHistory = ticket.GetHistory(userName).ToList(),
+                ErrorMessage = GetError(),
+            };
             return View(playerModel);
         }
 
@@ -50,16 +50,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            var modeOfTransport = transportType.ToLower() switch
-            {
-                "train" => ModeOfTransport.Train,
-                "metro" => ModeOfTransport.Metro,
-                "tram" => ModeOfTransport.Tram,
-                "bus" => ModeOfTransport.Bus,
-                "walking" => ModeOfTransport.Walking,
-                _ => ModeOfTransport.Tram
-            };
-            Log(logic.MovePlayerToStation(Request.Cookies["username"]!, station, modeOfTransport));
+            Log(player.MoveToStation(Request.Cookies["username"]!, station, transportType));
             return RedirectToAction("Index");
         }
 
@@ -67,14 +58,15 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            var model = new GameViewModel();
-            var player = logic.GetPlayer(Request.Cookies["username"]!);
-            if (player == null)
-                return RedirectToAction("Login", "Home");
-            model.GameMaster = player.Game?.GameMaster.Name;
-            model.Players = player.Game?.Players.Select(p => p.Name).ToList() ?? [];
-            model.IsStarted = player.Game?.IsStarted ?? false;
-            model.IsGameMaster = player.Game?.GameMaster == player;
+            var userName = Request.Cookies["username"]!;
+            var model = new GameViewModel
+            { GameMaster = game.GameMasterOf(userName) };
+            if (model.GameMaster != null)
+            {
+                model.Players = game.GetPlayers(model.GameMaster).ToList();
+                model.IsStarted = game.IsStarted(model.GameMaster);
+                model.IsGameMaster = game.GameMasterOf(userName) == userName;
+            }
             model.ErrorMessage = GetError();
             return View(model);
         }
@@ -83,7 +75,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            Log(logic.CreateGame(Request.Cookies["username"]!));
+            Log(game.Create(Request.Cookies["username"]!));
             return RedirectToAction("Game");
         }
 
@@ -92,7 +84,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            Log(logic.JoinGame(Request.Cookies["username"]!, gameMasterName));
+            Log(game.Join(Request.Cookies["username"]!, gameMasterName));
             return RedirectToAction("Game");
         }
 
@@ -100,7 +92,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            Log(logic.LeaveGame(Request.Cookies["username"]!));
+            Log(game.Leave(Request.Cookies["username"]!));
             return RedirectToAction("Game");
         }
 
@@ -108,7 +100,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            Log(logic.StartGame(Request.Cookies["username"]!));
+            Log(game.Start(Request.Cookies["username"]!));
             return RedirectToAction("Game");
         }
 
@@ -116,7 +108,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            Log(logic.EndGame(Request.Cookies["username"]!));
+            Log(game.End(Request.Cookies["username"]!));
             return RedirectToAction("Game");
         }
 
@@ -124,10 +116,7 @@ namespace RotterdamDetectives_Presentation.Controllers
         {
             if (Request.Cookies["username"] == null || Request.Cookies["password"] == null)
                 return false;
-            var result = logic.LoginPlayer(Request.Cookies["username"] ?? "", Request.Cookies["password"] ?? "");
-            if (!result.IsOk)
-                AddError(result.Error!);
-            return result.IsOk;
+            return player.Login(Request.Cookies["username"] ?? "", Request.Cookies["password"] ?? "");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,4 +1,5 @@
-﻿using RotterdamDetectives_Globals;
+﻿using RotterdamDetectives_DataInterface;
+using RotterdamDetectives_Globals;
 using RotterdamDetectives_LogicInterface;
 using System;
 using System.Collections.Generic;
@@ -8,57 +9,83 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Game(Player gameMaster) : IGame
+    public class Game(IGameDB db, Ticket tickets) : IGame
     {
-        private readonly Player gameMaster = gameMaster;
-        public IPlayer GameMaster => gameMaster;
-        private readonly List<Player> players = [];
-        public IReadOnlyList<IPlayer> Players => players;
-        public bool IsStarted { get; private set; }
-
-        internal Result AddPlayer(Player player)
+        public string? GameMasterOf(string player)
         {
-            if (IsStarted)
-                return Result.Err("Game has already started");
-            if (players.Contains(player))
-                return Result.Err("Player is already in the game");
+            return db.GameMasterOf(player);
+        }
+        
+        public Result Join(string gameMaster, string player)
+        {
+            if (!db.Exists(gameMaster))
+                return Result.Err("Game does not exist");
             if (player == gameMaster)
                 return Result.Err("Player is the game master");
-            players.Add(player);
-            player.game = this;
+            bool isStarted = db.IsGameStarted(gameMaster);
+            if (isStarted)
+                return Result.Err("Game has already started");
+            bool isPlayerInGame = db.IsPlayerInGame(gameMaster, player);
+            if (isPlayerInGame)
+                return Result.Err("Player is already in the game");
+            db.AddPlayer(gameMaster, player);
             return Result.Ok();
         }
 
-        internal Result RemovePlayer(Player player)
+        public Result Leave(string player)
         {
-            if (!players.Contains(player))
-                return Result.Err("Player is not in the game");
-            players.Remove(player);
+            string? gameMaster = db.GameMasterOf(player);
+            if (gameMaster == null)
+                return Result.Err("Player is not in a game");
+            db.RemovePlayer(gameMaster, player);
             return Result.Ok();
         }
 
-        internal Result Start()
+        public IEnumerable<string> GetPlayers(string gameMaster)
         {
-            List<Player> playersInGame = [.. players, gameMaster];
+            return db.GetPlayers(gameMaster);;
+        }
+
+        public Result Create(string gameMaster)
+        {
+            if (db.GameMasterOf(gameMaster) != null)
+                return Result.Err("Player is already a game master");
+            db.CreateGame(gameMaster);
+            return Result.Ok();
+        }
+
+        public Result Start(string gameMaster)
+        {
+            var playersInGame = db.GetPlayers(gameMaster).ToList();
+            playersInGame.Add(gameMaster);
             if (playersInGame.Count < 2)
                 return Result.Err("Not enough players in the game");
             foreach (var p in playersInGame)
-                p.ResetTickets();
-            IsStarted = true;
+                tickets.ResetTickets(p);
+            db.SetStarted(gameMaster, true);
             return Result.Ok();
         }
 
-        internal void End()
+        public bool IsStarted(string gameMaster)
         {
-            IsStarted = false;
-            foreach (var p in players)
+            return db.IsGameStarted(gameMaster);
+        }
+
+        public Result End(string gameMaster)
+        {
+            if (!IsStarted(gameMaster))
+                return Result.Err("Game is not started");
+            if (gameMaster != db.GameMasterOf(gameMaster))
+                return Result.Err("Player is not the game master");
+            db.SetStarted(gameMaster, false);
+            var playersInGame = db.GetPlayers(gameMaster).ToList();
+            playersInGame.Add(gameMaster);
+            foreach (var p in playersInGame)
             {
-                p.game = null;
-                p.ResetTickets();
+                tickets.ResetTickets(p);
             }
-            gameMaster.game = null;
-            gameMaster.ResetTickets();
-            players.Clear();
+            db.DeleteGame(gameMaster);
+            return Result.Ok();
         }
     }
 }

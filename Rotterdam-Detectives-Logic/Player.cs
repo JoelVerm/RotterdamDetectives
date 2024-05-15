@@ -1,4 +1,5 @@
-﻿using RotterdamDetectives_Globals;
+﻿using RotterdamDetectives_DataInterface;
+using RotterdamDetectives_Globals;
 using RotterdamDetectives_LogicInterface;
 using System;
 using System.Collections.Generic;
@@ -8,61 +9,57 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Player(string name, string password, Station station) : IPlayer
+    public class Player(IPlayerDB db, Station stations, Ticket tickets, IPasswordHasher pw) : IPlayer
     {
-        private static readonly Dictionary<ModeOfTransport, int> startTicketAmounts = new()
+        public Result MoveToStation(string player, string station, string modeOfTransport)
         {
-            { ModeOfTransport.Train, 10 },
-            { ModeOfTransport.Metro, 18 },
-            { ModeOfTransport.Tram, 15 },
-            { ModeOfTransport.Bus, 20 },
-            { ModeOfTransport.Walking, 8 }
-        };
+            string? currentStation = db.GetCurrentStation(player);
+            if (currentStation == null)
+                return Result.Err("Player does not exist");
 
-        public string Name { get; private set; } = name;
-        internal string Password { get; private set; } = password;
-        public bool IsMrX { get; private set; }
-        internal Game? game;
-        public IGame? Game => game;
-        private readonly List<Ticket> tickets = [];
-        public IReadOnlyList<ITicket> Tickets => tickets;
-        private readonly List<Ticket> ticketHistory = [];
-        public IReadOnlyList<ITicket> TicketHistory => ticketHistory;
-        private Station currentStation = station;
-        public IStation CurrentStation => currentStation;
-
-        internal Result MoveToStation(Station station, ModeOfTransport modeOfTransport)
-        {
-            var connections = CurrentStation.GetConnectionsTo(station);
+            var connections = stations.GetConnectionsOf(currentStation);
             if (connections.Count == 0)
-                return Result.Err("Stations are not connected");
+                return Result.Err("Station is not connected");
+            connections = connections.Where(c => c.Destination == station).ToList();
 
             var transportConnection = connections.FirstOrDefault(c => c.ModeOfTransport == modeOfTransport);
             if (transportConnection == null)
                 return Result.Err("Wrong mode of transport");
 
-            var ticket = tickets.FirstOrDefault(t => t.ModeOfTransport == modeOfTransport);
-            if (ticket == null)
-                return Result.Err("No ticket for this mode of transport");
+            return tickets.Use(player, modeOfTransport);
+        }
 
-            tickets.Remove(ticket);
-            ticketHistory.Add(ticket);
-            currentStation = station;
+        public string? GetCurrentStation(string player)
+        {
+            return db.GetCurrentStation(player);
+        }
 
+        public bool IsMrX(string player)
+        {
+            return db.IsMrX(player);
+        }
+
+        public bool Login(string username, string password)
+        {
+            string? hash = db.GetPasswordHash(username);
+            if (hash == null)
+                return false;
+            return pw.VerifyHashedPassword(username, password, hash);
+        }
+
+        public Result Register(string username, string password)
+        {
+            string? existing = db.GetPasswordHash(username);
+            if (existing != null)
+                return Result.Err("Username already exists");
+            string hash = pw.HashPassword(username, password);
+            db.Register(username, hash);
             return Result.Ok();
         }
 
-        internal void AddStartTickets()
+        public bool Exists(string player)
         {
-            foreach (var (type, amount) in startTicketAmounts)
-                for (int i = 0; i < amount; i++)
-                    tickets.Add(new Ticket(type));
-        }
-
-        internal void ResetTickets()
-        {
-            tickets.AddRange(ticketHistory);
-            ticketHistory.Clear();
+            return db.GetPasswordHash(player) != null;
         }
     }
 }
