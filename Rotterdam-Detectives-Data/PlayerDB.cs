@@ -16,6 +16,11 @@ namespace RotterdamDetectives_Data
             return db.String("SELECT Stations.Name FROM Players LEFT JOIN Stations ON Players.StationId = Stations.Id WHERE Players.Name = @player", new { player });
         }
 
+        public void SetCurrentStation(string player, string station)
+        {
+            db.Execute("UPDATE Players SET StationId = (SELECT Id FROM Stations WHERE Name = @station) WHERE Name = @player", new { player, station });
+        }
+
         public string? GetPasswordHash(string player)
         {
             return db.String("SELECT PasswordHash FROM Players WHERE Name = @player", new { player });

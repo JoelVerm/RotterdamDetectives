@@ -42,5 +42,10 @@ namespace RotterdamDetectives_Logic
                 ))
                 .ToList<RotterdamDetectives_LogicInterface.IStationWithPlayers>();
         }
+
+        internal string RandomStation()
+        {
+            return db.GetStations().OrderBy(s => Guid.NewGuid()).First();
+        }
     }
 }

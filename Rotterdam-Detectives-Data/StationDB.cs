@@ -2,6 +2,7 @@
 using RotterdamDetectives_Globals;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,14 +78,15 @@ namespace RotterdamDetectives_Data
 
         public List<IStationWithPlayers> GetWithPlayers()
         {
-            var rows = db.Rows("SELECT Stations.Name, Players.Name FROM Stations" +
+            var rows = db.Rows("SELECT Stations.Name AS 'Station', Players.Name AS 'Player' FROM Stations" +
                 "LEFT JOIN Players ON Stations.Id = Players.StationId",
                 new {},
-                row => (row["Name"].ToString()!, row["Players.Name"].ToString()!)
+                row => (row["Station"].ToString()!, row["Player"].ToString()!)
             ) ?? [];
             var stations = new List<StationWithPlayers>();
             foreach (var row in rows)
             {
+                Debug.WriteLine(row.Item1);
                 var station = stations.FirstOrDefault(s => s.Station == row.Item1);
                 if (station == null)
                 {

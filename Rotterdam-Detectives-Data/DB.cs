@@ -52,6 +52,8 @@ namespace RotterdamDetectives_Data
                 db.Open();
                 var res = cmd.ExecuteScalar();
                 db.Close();
+                if (res is DBNull)
+                    return null;
                 if (res == null)
                     return null;
                 return (Out)res;
@@ -75,6 +77,8 @@ namespace RotterdamDetectives_Data
                 db.Open();
                 var res = cmd.ExecuteScalar();
                 db.Close();
+                if (res is DBNull)
+                    return null;
                 if (res == null)
                     return null;
                 return (string)res;

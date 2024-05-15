@@ -26,6 +26,7 @@ namespace RotterdamDetectives_Logic
             if (transportConnection == null)
                 return Result.Err("Wrong mode of transport");
 
+            db.SetCurrentStation(player, station);
             return tickets.Use(player, modeOfTransport);
         }
 
@@ -54,6 +55,7 @@ namespace RotterdamDetectives_Logic
                 return Result.Err("Username already exists");
             string hash = pw.HashPassword(username, password);
             db.Register(username, hash);
+            db.SetCurrentStation(username, stations.RandomStation());
             return Result.Ok();
         }
 
