@@ -16,7 +16,7 @@ namespace RotterdamDetectives_DataInterface
         public void AddConnection(string from, string to, string modeOfTransport);
         public void RemoveConnections(string from, string to);
         public void SetCoordinatesOf(string station, int latitude, int longitude);
-        public List<IStationWithPlayers> GetWithPlayers();
+        public List<IStationWithPlayers> GetWithPlayers(string username);
         public List<string> GetModesOfTransport();
     }
 }

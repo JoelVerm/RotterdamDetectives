@@ -74,11 +74,12 @@ namespace RotterdamDetectives_Data
                 new { Latitude = latitude, Longitude = longitude, Station = station });
         }
 
-        public List<IStationWithPlayers> GetWithPlayers()
+        public List<IStationWithPlayers> GetWithPlayers(string username)
         {
             var rows = db.Rows("SELECT Stations.Name AS 'Station', Players.Name AS 'Player' FROM Stations " +
-                "LEFT JOIN Players ON Stations.Id = Players.StationId",
-                new {},
+                "LEFT JOIN Players ON Stations.Id = Players.StationId " +
+                "AND Players.Game = (SELECT Game FROM Players WHERE Name = @username)",
+                new { username },
                 row => (row["Station"].ToString()!, row["Player"].ToString()!)
             ) ?? [];
             var stations = new List<StationWithPlayers>();

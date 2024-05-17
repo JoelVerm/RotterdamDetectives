@@ -38,7 +38,7 @@ namespace RotterdamDetectives_Presentation.Controllers
             var playerModel = new PlayerViewModel {
                 OwnStation = currentStation,
                 ConnectedStations = station.GetConnectionsOf(currentStation),
-                Stations = station.GetWithPlayers(),
+                Stations = station.GetWithPlayers(userName),
                 TicketAmounts = ticket.GetSpare(userName),
                 TicketHistory = ticket.GetHistory(userName).ToList(),
                 ErrorMessage = GetError(),

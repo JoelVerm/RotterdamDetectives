@@ -34,9 +34,9 @@ namespace RotterdamDetectives_Logic
             db.SetCoordinatesOf(station, latitude, longitude);
         }
 
-        public List<RotterdamDetectives_LogicInterface.IStationWithPlayers> GetWithPlayers()
+        public List<RotterdamDetectives_LogicInterface.IStationWithPlayers> GetWithPlayers(string username)
         {
-            return db.GetWithPlayers()
+            return db.GetWithPlayers(username)
                 .Select(s => new StationWithPlayers(s.Station, s.Players,
                     db.GetConnectionsFrom(s.Station)?.Select(c => new Connection(c.Destination, c.ModeOfTransport)).ToList() ?? []
                 ))

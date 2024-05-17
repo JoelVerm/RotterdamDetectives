@@ -13,6 +13,6 @@ namespace RotterdamDetectives_LogicInterface
         public Result AddConnection(string from, string to, string modeOfTransport);
         public void RemoveConnections(string from, string to);
         public void SetCoordinates(string station, int latitude, int longitude);
-        public List<IStationWithPlayers> GetWithPlayers();
+        public List<IStationWithPlayers> GetWithPlayers(string username);
     }
 }
