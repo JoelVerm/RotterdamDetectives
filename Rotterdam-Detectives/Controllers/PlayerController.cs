@@ -41,6 +41,7 @@ namespace RotterdamDetectives_Presentation.Controllers
                 Stations = station.GetWithPlayers(userName),
                 TicketAmounts = ticket.GetSpare(userName),
                 TicketHistory = ticket.GetHistory(userName).ToList(),
+                IsMrX = game.IsMrX(userName),
                 ErrorMessage = GetError(),
             };
             return View(playerModel);

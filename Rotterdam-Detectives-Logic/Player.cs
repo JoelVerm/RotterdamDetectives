@@ -37,11 +37,6 @@ namespace RotterdamDetectives_Logic
             return db.GetCurrentStation(player);
         }
 
-        public bool IsMrX(string player)
-        {
-            return db.IsMrX(player);
-        }
-
         public bool Login(string username, string password)
         {
             string? hash = db.GetPasswordHash(username);

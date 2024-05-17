@@ -10,7 +10,6 @@ namespace RotterdamDetectives_DataInterface
     {
         public string? GetCurrentStation(string player);
         public void SetCurrentStation(string player, string station);
-        public bool IsMrX(string player);
         public string? GetPasswordHash(string player);
         public void Register(string player, string hash);
     }

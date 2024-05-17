@@ -15,6 +15,8 @@ namespace RotterdamDetectives_DataInterface
         public bool IsPlayerInGame(string gameMaster, string player);
         public bool IsGameStarted(string gameMaster);
         public void SetStarted(string gameMaster, bool started);
+        public string? GetMrX(string gameMaster);
+        public void SetMrX(string gameMaster, string mrX);
         public void AddPlayer(string gameMaster, string player);
         public void RemovePlayer(string gameMaster, string player);
         public IEnumerable<string> GetPlayers(string gameMaster);

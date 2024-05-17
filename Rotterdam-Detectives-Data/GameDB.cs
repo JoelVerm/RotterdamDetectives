@@ -46,6 +46,21 @@ namespace RotterdamDetectives_Data
             return db.Field<bool>("SELECT Started FROM Games WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)", new { gameMaster }) ?? false;
         }
 
+        public void SetStarted(string gameMaster, bool started)
+        {
+            db.Execute("UPDATE Games SET Started = @started WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)", new { gameMaster, started });
+        }
+
+        public string? GetMrX(string gameMaster)
+        {
+            return db.String("SELECT Name FROM Players WHERE Id = (SELECT MrX FROM Games WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster))", new { gameMaster });
+        }
+
+        public void SetMrX(string gameMaster, string mrX)
+        {
+            db.Execute("UPDATE Games SET MrX = (SELECT Id FROM Players WHERE Name = @mrX) WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)", new { gameMaster, mrX });
+        }
+
         public bool IsPlayerInGame(string gameMaster, string player)
         {
             return db.Field<int>("SELECT COUNT(*) FROM Players WHERE Game = (SELECT Id FROM Games WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)) AND Name = @player", new { gameMaster, player }) > 0;
@@ -54,11 +69,6 @@ namespace RotterdamDetectives_Data
         public void RemovePlayer(string gameMaster, string player)
         {
             db.Execute("UPDATE Players SET Game = NULL WHERE Name = @player", new { player });
-        }
-
-        public void SetStarted(string gameMaster, bool started)
-        {
-            db.Execute("UPDATE Games SET Started = @started WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)", new { gameMaster, started });
         }
     }
 }

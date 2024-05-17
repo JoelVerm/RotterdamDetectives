@@ -43,7 +43,7 @@ namespace RotterdamDetectives_Logic
 
         public IEnumerable<string> GetPlayers(string gameMaster)
         {
-            return db.GetPlayers(gameMaster);;
+            return db.GetPlayers(gameMaster).Select(p => IsMrX(p) ? $"{p} (Mr. X)" : p);
         }
 
         public Dictionary<string, IEnumerable<string>> GetPlayerTickets(string gameMaster)
@@ -51,8 +51,26 @@ namespace RotterdamDetectives_Logic
             var players = db.GetPlayers(gameMaster);
             var result = new Dictionary<string, IEnumerable<string>>();
             foreach (var p in players)
-                result[p] = tickets.GetHistory(p);
+            {
+                if (IsMrX(p))
+                    result[$"{p} (Mr. X)"] = tickets.GetHistory(p);
+                else
+                    result[p] = tickets.GetHistory(p);
+            }
             return result;
+        }
+
+        public string MrX(string gameMaster)
+        {
+            return db.GetMrX(gameMaster) ?? "";
+        }
+
+        public bool IsMrX(string player)
+        {
+            var gameMaster = db.GameMasterOf(player);
+            if (gameMaster == null)
+                return false;
+            return db.GetMrX(gameMaster) == player;
         }
 
         public Result Create(string gameMaster)
@@ -72,6 +90,8 @@ namespace RotterdamDetectives_Logic
                 return Result.Err("Not enough players in the game");
             foreach (var p in playersInGame)
                 tickets.ResetTickets(p);
+            string randomPlayer = playersInGame[new Random().Next(playersInGame.Count)];
+            db.SetMrX(gameMaster, randomPlayer);
             db.SetStarted(gameMaster, true);
             return Result.Ok();
         }

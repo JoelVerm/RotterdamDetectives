@@ -26,11 +26,6 @@ namespace RotterdamDetectives_Data
             return db.String("SELECT PasswordHash FROM Players WHERE Name = @player", new { player });
         }
 
-        public bool IsMrX(string player)
-        {
-            return db.Field<bool>("SELECT IsMrX FROM Players WHERE Name = @player", new { player }) ?? false;
-        }
-
         public void Register(string player, string hash)
         {
             db.Execute("INSERT INTO Players (Name, PasswordHash) VALUES (@player, @hash)", new { player, hash });

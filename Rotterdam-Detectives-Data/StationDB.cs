@@ -76,10 +76,12 @@ namespace RotterdamDetectives_Data
 
         public List<IStationWithPlayers> GetWithPlayers(string username)
         {
+            var gameId = db.Field<int>("SELECT Game FROM Players WHERE Name = @username", new { username }) ?? 0;
             var rows = db.Rows("SELECT Stations.Name AS 'Station', Players.Name AS 'Player' FROM Stations " +
                 "LEFT JOIN Players ON Stations.Id = Players.StationId " +
-                "AND Players.Game = (SELECT Game FROM Players WHERE Name = @username)",
-                new { username },
+                "AND Players.Game = @gameId " +
+                "AND (SELECT MrX FROM Games WHERE Id = @gameId) <> Players.Id",
+                new { username, gameId },
                 row => (row["Station"].ToString()!, row["Player"].ToString()!)
             ) ?? [];
             var stations = new List<StationWithPlayers>();

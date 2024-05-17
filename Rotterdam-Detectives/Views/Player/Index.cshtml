@@ -11,6 +11,12 @@
             @Model.ErrorMessage
         </div>
     }
+    @if(Model.IsMrX)
+    {
+        <div class="row mb-3">
+			<h1>You are Mr. X!</h1>
+		</div>
+    }
     <div class="row mb-3">
         <div class="col">
             <h2>Stations</h2>

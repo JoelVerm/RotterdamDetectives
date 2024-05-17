@@ -9,6 +9,7 @@ namespace RotterdamDetectives_Presentation.Models
         public IReadOnlyList<IStationWithPlayers> Stations { get; set; } = [];
         public required IReadOnlyDictionary<string, int> TicketAmounts { get; set; }
         public IReadOnlyList<string> TicketHistory { get; set; } = [];
+        public bool IsMrX { get; set; } = false;
         public string? ErrorMessage { get; set; } = null;
     }
 }
