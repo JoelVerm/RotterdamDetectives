@@ -51,6 +51,7 @@ namespace RotterdamDetectives_Logic
             if (db.GameMasterOf(gameMaster) != null)
                 return Result.Err("Player is already a game master");
             db.CreateGame(gameMaster);
+            db.AddPlayer(gameMaster, gameMaster);
             return Result.Ok();
         }
 
@@ -83,6 +84,7 @@ namespace RotterdamDetectives_Logic
             foreach (var p in playersInGame)
             {
                 tickets.ResetTickets(p);
+                db.RemovePlayer(gameMaster, p);
             }
             db.DeleteGame(gameMaster);
             return Result.Ok();

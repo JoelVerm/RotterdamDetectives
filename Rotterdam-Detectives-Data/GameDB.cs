@@ -13,7 +13,7 @@ namespace RotterdamDetectives_Data
 
         public bool Exists(string gameMaster)
         {
-            return db.Field<int>("SELECT COUNT(*) FROM Games WHERE GameMaster = @gameMaster", new { gameMaster }) > 0;
+            return db.Field<int>("SELECT COUNT(*) FROM Games WHERE GameMaster = (SELECT Id FROM Players WHERE Name = @gameMaster)", new { gameMaster }) > 0;
         }
 
         public void AddPlayer(string gameMaster, string player)

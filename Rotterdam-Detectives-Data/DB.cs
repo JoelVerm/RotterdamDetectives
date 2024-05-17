@@ -130,7 +130,6 @@ namespace RotterdamDetectives_Data
                 List<Out> list = [];
                 foreach (DbDataRecord item in reader)
                 {
-                    Debug.WriteLine(item);
                     Out? obj = read(item);
                     if (obj != null)
                         list.Add(obj);

@@ -26,8 +26,10 @@ namespace RotterdamDetectives_Logic
             if (transportConnection == null)
                 return Result.Err("Wrong mode of transport");
 
-            db.SetCurrentStation(player, station);
-            return tickets.Use(player, modeOfTransport);
+            var canUseTicket = tickets.Use(player, modeOfTransport);
+            if (canUseTicket.IsOk)
+                db.SetCurrentStation(player, station);
+            return canUseTicket;
         }
 
         public string? GetCurrentStation(string player)
