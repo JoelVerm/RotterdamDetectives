@@ -45,4 +45,22 @@
             }
         </div>
     </div>
+    <div class="row mb-3">
+        <h2>Ticket history</h2>
+        @foreach (var (player, tickets) in Model.PlayerTickets)
+        {
+            if(player != null && tickets != null)
+			{
+				<div class="col">
+                    <h4>@player</h4>
+					<div class="list-group">
+						@foreach (var ticket in tickets)
+						{
+							<div class="list-group-item">@ticket</div>
+						}
+					</div>
+                </div>
+            }
+        }
+    </div>
 </div>

@@ -13,6 +13,7 @@ namespace RotterdamDetectives_LogicInterface
         public Result Join(string gameMaster, string player);
         public Result Leave(string player);
         public IEnumerable<string> GetPlayers(string gameMaster);
+        public Dictionary<string, IEnumerable<string>> GetPlayerTickets(string gameMaster);
         public Result Create(string gameMaster);
         public bool IsStarted(string gameMaster);
         public Result Start(string gameMaster);

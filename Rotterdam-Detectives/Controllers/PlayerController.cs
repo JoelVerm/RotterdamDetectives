@@ -64,6 +64,7 @@ namespace RotterdamDetectives_Presentation.Controllers
             if (model.GameMaster != null)
             {
                 model.Players = game.GetPlayers(model.GameMaster).ToList();
+                model.PlayerTickets = game.GetPlayerTickets(model.GameMaster);
                 model.IsStarted = game.IsStarted(model.GameMaster);
                 model.IsGameMaster = game.GameMasterOf(userName) == userName;
             }

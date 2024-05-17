@@ -46,6 +46,15 @@ namespace RotterdamDetectives_Logic
             return db.GetPlayers(gameMaster);;
         }
 
+        public Dictionary<string, IEnumerable<string>> GetPlayerTickets(string gameMaster)
+        {
+            var players = db.GetPlayers(gameMaster);
+            var result = new Dictionary<string, IEnumerable<string>>();
+            foreach (var p in players)
+                result[p] = tickets.GetHistory(p);
+            return result;
+        }
+
         public Result Create(string gameMaster)
         {
             if (db.GameMasterOf(gameMaster) != null)
