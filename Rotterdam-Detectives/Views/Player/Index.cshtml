@@ -4,7 +4,7 @@
 
 @model PlayerViewModel
 
-<div class="container">
+<div class="mx-3">
     @if (Model.ErrorMessage != null)
     {
         <div class="row mb-3 alert alert-danger" role="alert">
@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="col">
-            <h2>Your ticket history</h2>
+            <h2>Ticket history</h2>
             <div class="list-group">
                 @foreach (var ticket in Model.TicketHistory)
                 {
