@@ -46,28 +46,32 @@
             </div>
         </div>
         <div class="col">
-            <h2>Your tickets</h2>
-            <div class="list-group">
-                @foreach (var ticket in Model.TicketAmounts)
-                {
-                    <div class="list-group-item">
-                        <h4>@ticket.Key</h4>
-                        <span>
-                            Amount: @ticket.Value
-                        </span>
+            <div class="sticky-top">
+                <div class="row mb-3">
+                    <h2>Your tickets</h2>
+                    <div class="list-group">
+                        @foreach (var ticket in Model.TicketAmounts)
+                        {
+                            <div class="list-group-item">
+                                <h4>@ticket.Key</h4>
+                                <span>
+                                    Amount: @ticket.Value
+                                </span>
+                            </div>
+                        }
                     </div>
-                }
-            </div>
-        </div>
-        <div class="col">
-            <h2>Ticket history</h2>
-            <div class="list-group">
-                @foreach (var ticket in Model.TicketHistory)
-                {
-                    <div class="list-group-item">
-                        <span>@ticket</span>
+                </div>
+                <div class="row">
+                    <h2>Ticket history</h2>
+                    <div class="list-group">
+                        @foreach (var ticket in Model.TicketHistory)
+                        {
+                            <div class="list-group-item">
+                                <span>@ticket</span>
+                            </div>
+                        }
                     </div>
-                }
+                </div>
             </div>
         </div>
     </div>
