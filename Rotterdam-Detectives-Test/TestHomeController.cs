@@ -10,10 +10,7 @@ namespace RotterdamDetectives_Test
         public void TestIndex()
         {
             // Arrange
-            var processedDataSource = new MockProcessedDataSource();
-            processedDataSource.ShouldReturnLoggedinUser = true;
-
-            var controller = new HomeController(processedDataSource);
+            var controller = new HomeController();
 
             // Act
             var result = controller.Index() as ViewResult;

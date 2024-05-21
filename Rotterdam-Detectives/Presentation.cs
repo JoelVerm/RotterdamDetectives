@@ -4,15 +4,8 @@ using System.Diagnostics;
 
 namespace RotterdamDetectives_Presentation
 {
-    public class Presentation
+    public class Presentation(IGame game, IPlayer player, IStation station, ITicket ticket, IAdmin admin)
     {
-        private IProcessedDataSource _processedDataSource;
-
-        public Presentation(IProcessedDataSource processedDataSource)
-        {
-            _processedDataSource = processedDataSource;
-        }
-
         public void Start() {
             Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
@@ -21,7 +14,11 @@ namespace RotterdamDetectives_Presentation
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton(_processedDataSource);
+            builder.Services.AddSingleton(game);
+            builder.Services.AddSingleton(player);
+            builder.Services.AddSingleton(station);
+            builder.Services.AddSingleton(ticket);
+            builder.Services.AddSingleton(admin);
 
             var app = builder.Build();
 

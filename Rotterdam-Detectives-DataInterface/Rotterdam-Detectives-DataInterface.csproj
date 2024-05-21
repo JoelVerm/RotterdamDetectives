@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Rotterdam-Detectives-Globals\Rotterdam-Detectives-Globals.csproj" />
+  </ItemGroup>
+
 </Project>

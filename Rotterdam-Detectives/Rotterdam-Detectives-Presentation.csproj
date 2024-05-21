@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Rotterdam-Detectives-Globals\Rotterdam-Detectives-Globals.csproj" />
     <ProjectReference Include="..\Rotterdam-Detectives-LogicInterface\Rotterdam-Detectives-LogicInterface.csproj" />
   </ItemGroup>
 

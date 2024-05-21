@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RotterdamDetectives_Globals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,10 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface IStation
     {
-        public string Name { get; }
-        public List<string> Players { get; }
-        public List<IStationConnection> Connections { get; }
+        public IReadOnlyList<IConnection> GetConnectionsOf(string station);
+        public Result AddConnection(string from, string to, string name, string modeOfTransport);
+        public void RemoveConnections(string from, string to);
+        public void SetCoordinates(string station, int latitude, int longitude);
+        public List<IStationWithPlayers> GetWithPlayers(string username);
     }
 }

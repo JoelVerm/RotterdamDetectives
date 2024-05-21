@@ -4,7 +4,7 @@ namespace RotterdamDetectives_Main
 {
     public class PasswordHasher : RotterdamDetectives_LogicInterface.IPasswordHasher
     {
-        PasswordHasher<string> passwordHasher = new PasswordHasher<string>();
+        readonly PasswordHasher<string> passwordHasher = new PasswordHasher<string>();
 
         public string HashPassword(string username, string password)
         {

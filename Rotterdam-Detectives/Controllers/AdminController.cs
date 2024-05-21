@@ -5,26 +5,88 @@ using RotterdamDetectives_LogicInterface;
 
 namespace RotterdamDetectives_Presentation.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController(IAdmin admin) : Controller
     {
-        IProcessedDataSource dataSource;
+        public IActionResult Index()
+        {
+            if (Request.Query["Password"] == "TestAdmin")
+                Response.Cookies.Append("Admin-Password", "TestAdmin");
+            else if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            if (Request.Query.ContainsKey("Logout"))
+                Response.Cookies.Delete("Admin-Password");
 
-        public AdminController(IProcessedDataSource _dataSource) {
-            dataSource = _dataSource;
+            AdminViewModel model = new()
+            {
+                Stations = admin.GetStations()
+            };
+            return View(model);
         }
 
-        public IActionResult Index()
+        [HttpPost]
+        public IActionResult AddStation(string addStation)
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
-            return View();
+            admin.AddStation(addStation);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteStation()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            var deleteStation = Request.Query["Name"];
+            if (!string.IsNullOrEmpty(deleteStation))
+                admin.DeleteStation(deleteStation!);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult ConnectStations()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            var connectStation = Request.Query["Name"].ToString();
+            if (!string.IsNullOrEmpty(connectStation))
+            {
+                Response.Cookies.Append("ConnectStation", connectStation!);
+                var model = new ConnectStationsViewModel
+                {
+                    StationName = connectStation,
+                    AllStations = admin.GetStations().Select(e => e.Name).ToList(),
+                    ModesOfTransport = admin.GetModesOfTransport()
+                };
+                return View(model);
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult ConnectStations(string name, string to, string transportMode)
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            var from = Request.Cookies["ConnectStation"];
+            Response.Cookies.Delete("ConnectStation");
+            if (!string.IsNullOrEmpty(from))
+                admin.ConnectStations(from, to, name, transportMode);
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DisconnectStations()
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            var from = Request.Query["From"];
+            var to = Request.Query["To"];
+            if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(to))
+                admin.DisconnectStations(from!, to!);
+            return RedirectToAction("Index");
         }
 
         bool LoggedIn()
         {
-            if (Request.Cookies["username"] == null || Request.Cookies["password"] == null)
-                return false;
-            return dataSource.LoginUser(Request.Cookies["username"] ?? "", Request.Cookies["password"] ?? "");
+            return Request.Cookies["Admin-Password"] == "TestAdmin";
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

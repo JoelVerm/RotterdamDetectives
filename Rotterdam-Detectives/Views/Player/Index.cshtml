@@ -4,44 +4,71 @@
 
 @model PlayerViewModel
 
-<div class="container">
+<div class="mx-3">
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="row mb-3 alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+    @if(Model.IsMrX)
+    {
+        <div class="row mb-3">
+			<h1>You are Mr. X!</h1>
+		</div>
+    }
     <div class="row mb-3">
         <div class="col">
+            <h2>Stations</h2>
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
-                    <div class="list-group-item @if (station.Name == Model.OwnStation) {<text>active</text>}">
-                        <h4>@station.Name</h4>
-                        <p>
-                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Name} ({cs.TransportType})")).OrDefault("None") <br />
-                            Players: @string.Join(", ", station.Players).OrDefault("None")
-                        </p>
-                        @foreach (var conn in Model.ConnectedStations.FindAll(cs => cs.Name == station.Name))
+                    <div class="list-group-item @if (station.Station == Model.OwnStation) {<text>active</text>}">
+                        <h4>@station.Station</h4>
+                        <div>
+                            @foreach (var conn in station.Connections)
+							{
+								<p class="m-0">@conn.Name → @conn.Destination (@conn.ModeOfTransport)</p>
+							}
+                        </div>
+                        <div class="list-group">
+                            @foreach (var p in station.Players)
+                            {
+                                <div class="list-group-item">@p</div>
+                            }
+                        </div>
+                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station))
                         {
-                            <a href="/Player/MoveStation?Station=@station.Name&TransportType=@conn.TransportType" class="btn btn-primary">Move here by @conn.TransportType</a>
+                            <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport (@conn.Name)</a>
                         }
                     </div>
                 }
             </div>
         </div>
-		<div class="col">
+        <div class="col">
+            <h2>Your tickets</h2>
             <div class="list-group">
-                @foreach (var ticket in Model.Tickets)
+                @foreach (var ticket in Model.TicketAmounts)
                 {
                     <div class="list-group-item">
-                        <h4>@ticket.Name</h4>
-						<p>
-							Amount: @ticket.Amount
-						</p>
+                        <h4>@ticket.Key</h4>
+                        <span>
+                            Amount: @ticket.Value
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col">
+            <h2>Ticket history</h2>
+            <div class="list-group">
+                @foreach (var ticket in Model.TicketHistory)
+                {
+                    <div class="list-group-item">
+                        <span>@ticket</span>
                     </div>
                 }
             </div>
         </div>
     </div>
-    @if (Model.ErrorMessage != null)
-	{
-		<div class="row mb-3 alert alert-danger" role="alert">
-			@Model.ErrorMessage
-		</div>
-	}
 </div>
