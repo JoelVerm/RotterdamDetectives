@@ -20,6 +20,10 @@ namespace RotterdamDetectives_Data
 
         public void Delete(string station)
         {
+            db.Execute("DELETE FROM Connections " +
+                "WHERE [From] = (SELECT Id FROM Stations WHERE Name = @Name) " +
+                "OR [To] = (SELECT Id FROM Stations WHERE Name = @Name)",
+                new { Name = station });
             db.Execute("DELETE FROM Stations WHERE Name = @Name", new { Name = station });
         }
 
@@ -35,25 +39,25 @@ namespace RotterdamDetectives_Data
 
         public IEnumerable<IConnection>? GetConnectionsFrom(string station)
         {
-            return db.Rows("SELECT *, Stations.Name AS 'ToName', TransportTypes.Name AS 'TransportType' FROM Connections " +
+            return db.Rows("SELECT Connections.Name, Stations.Name AS 'ToName', TransportTypes.Name AS 'TransportType' FROM Connections " +
                 "LEFT JOIN Stations ON Connections.[To] = Stations.Id " +
                 "LEFT JOIN TransportTypes ON Connections.TransportTypeId = TransportTypes.Id " +
                 "WHERE Connections.[From] = (SELECT Id FROM Stations WHERE Name = @From)",
                 new { From = station },
-                row => new Connection(row["ToName"].ToString()!, row["TransportType"].ToString()!)
+                row => new Connection(row["Name"].ToString()!, row["ToName"].ToString()!, row["TransportType"].ToString()!)
             );
         }
 
-        public void AddConnection(string from, string to, string modeOfTransport)
+        public void AddConnection(string from, string to, string name, string transportType)
         {
             int fromId = db.Field<int>("SELECT Id FROM Stations WHERE Name = @Name", new { Name = from }) ?? 0;
             int toId = db.Field<int>(db.LastQuery, new { Name = to }) ?? 0;
-            int modeOfTransportId = db.Field<int>("SELECT Id FROM ModeOfTransports WHERE Name = @Name", new { Name = modeOfTransport }) ?? 0;
-            if (fromId == 0 || toId == 0 || modeOfTransportId == 0)
+            int transportTypeId = db.Field<int>("SELECT Id FROM TransportTypes WHERE Name = @Name", new { Name = transportType }) ?? 0;
+            if (fromId == 0 || toId == 0 || transportTypeId == 0)
                 return;
-            db.Execute("INSERT INTO Connections ([From], [To], ModeOfTransport) VALUES (@From, @To, @ModeOfTransport)",
-                               new { From = fromId, To = toId, ModeOfTransport = modeOfTransport });
-            db.Execute(db.LastQuery, new { From = toId, To = fromId, ModeOfTransport = modeOfTransport });
+            db.Execute("INSERT INTO Connections (Name, [From], [To], TransportTypeId) VALUES (@name, @From, @To, @transportTypeId)",
+                               new { name, From = fromId, To = toId, transportTypeId });
+            db.Execute(db.LastQuery, new { name, From = toId, To = fromId, transportTypeId });
         }
 
         public void RemoveConnections(string station1, string station2)

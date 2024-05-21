@@ -9,6 +9,7 @@
     <div class="row mb-3">
         <div class="col">
             <form class="form row" method="post" action="/Admin/ConnectStations">
+                <input class="form-control" type="text" id="name" name="name" placeholder="Connection name" />
                 <label for="to" class="form-label">Connect @Model.StationName to station:</label>
                 <select class="form-select" id="to" name="to">
 					@foreach (var station in Model.AllStations) {

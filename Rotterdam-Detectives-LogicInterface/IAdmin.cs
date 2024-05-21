@@ -11,7 +11,7 @@ namespace RotterdamDetectives_LogicInterface
     {
         public List<IStationWithConnections> GetStations();
         public void AddStation(string station);
-        public Result ConnectStations(string station1, string station2, string modeOfTransport);
+        public Result ConnectStations(string station1, string station2, string name, string modeOfTransport);
         public Result DisconnectStations(string station1, string station2);
         public Result DeleteStation(string station);
         public List<string> GetModesOfTransport();

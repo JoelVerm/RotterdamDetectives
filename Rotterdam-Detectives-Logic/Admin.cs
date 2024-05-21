@@ -16,11 +16,11 @@ namespace RotterdamDetectives_Logic
             stationDB.Add(station);
         }
 
-        public Result ConnectStations(string station1, string station2, string modeOfTransport)
+        public Result ConnectStations(string station1, string station2, string name, string modeOfTransport)
         {
             if (!stationDB.Exists(station1) || !stationDB.Exists(station2))
                 return Result.Err("One or both of the stations do not exist.");
-            stationDB.AddConnection(station1, station2, modeOfTransport);
+            stationDB.AddConnection(station1, station2, name, modeOfTransport);
             return Result.Ok();
         }
 
@@ -44,7 +44,7 @@ namespace RotterdamDetectives_Logic
         {
             return stationDB.GetStations()
                 .Select(s => new StationWithConnections(s, stationDB.GetConnectionsFrom(s)
-                    ?.Select(c => new Connection(c.Destination, c.ModeOfTransport))
+                    ?.Select(c => new Connection(c))
                     .ToList<RotterdamDetectives_LogicInterface.IConnection>() ?? [])).ToList<IStationWithConnections>();
         }
 

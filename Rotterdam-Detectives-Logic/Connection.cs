@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal class Connection(string _destination, string _modeOfTransport) : IConnection
+    internal class Connection(string name, string destination, string modeOfTransport) : IConnection
     {
-        public string Destination { get; set; } = _destination;
-        public string ModeOfTransport { get; set; } = _modeOfTransport;
+        public string Name { get; set; } = name;
+        public string Destination { get; set; } = destination;
+        public string ModeOfTransport { get; set; } = modeOfTransport;
+
+        public Connection(RotterdamDetectives_DataInterface.IConnection connection): this(connection.Name, connection.Destination, connection.ModeOfTransport) { }
     }
 }

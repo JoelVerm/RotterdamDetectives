@@ -62,14 +62,14 @@ namespace RotterdamDetectives_Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConnectStations(string to, string transportMode)
+        public IActionResult ConnectStations(string name, string to, string transportMode)
         {
             if (!LoggedIn())
                 return RedirectToAction("Login", "Home");
             var from = Request.Cookies["ConnectStation"];
             Response.Cookies.Delete("ConnectStation");
             if (!string.IsNullOrEmpty(from))
-                admin.ConnectStations(from, to, transportMode);
+                admin.ConnectStations(from, to, name, transportMode);
             return RedirectToAction("Index");
         }
 

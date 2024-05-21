@@ -13,14 +13,14 @@ namespace RotterdamDetectives_Logic
     {
         public IReadOnlyList<RotterdamDetectives_LogicInterface.IConnection> GetConnectionsOf(string station)
         {
-            return db.GetConnectionsFrom(station)?.Select(c => new Connection(c.Destination, c.ModeOfTransport)).ToList() ?? [];
+            return db.GetConnectionsFrom(station)?.Select(c => new Connection(c)).ToList() ?? [];
         }
 
-        public Result AddConnection(string from, string to, string modeOfTransport)
+        public Result AddConnection(string from, string to, string name, string modeOfTransport)
         {
             if (db.GetConnectionsFrom(from)?.Any(c => c.Destination == to) ?? false)
                 return Result.Err("Connection already exists");
-            db.AddConnection(from, to, modeOfTransport);
+            db.AddConnection(from, to, name, modeOfTransport);
             return Result.Ok();
         }
 
@@ -38,7 +38,7 @@ namespace RotterdamDetectives_Logic
         {
             return db.GetWithPlayers(username)
                 .Select(s => new StationWithPlayers(s.Station, s.Players,
-                    db.GetConnectionsFrom(s.Station)?.Select(c => new Connection(c.Destination, c.ModeOfTransport)).ToList() ?? []
+                    db.GetConnectionsFrom(s.Station)?.Select(c => new Connection(c)).ToList() ?? []
                 ))
                 .ToList<RotterdamDetectives_LogicInterface.IStationWithPlayers>();
         }

@@ -13,7 +13,7 @@ namespace RotterdamDetectives_DataInterface
         public bool Exists(string station);
         public IEnumerable<string> GetStations();
         public IEnumerable<IConnection>? GetConnectionsFrom(string station);
-        public void AddConnection(string from, string to, string modeOfTransport);
+        public void AddConnection(string from, string to, string name, string transportType);
         public void RemoveConnections(string from, string to);
         public void SetCoordinatesOf(string station, int latitude, int longitude);
         public List<IStationWithPlayers> GetWithPlayers(string username);

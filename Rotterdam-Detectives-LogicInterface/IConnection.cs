@@ -8,6 +8,7 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface IConnection
     {
+        public string Name { get; }
         public string ModeOfTransport { get; }
         public string Destination { get; }
     }

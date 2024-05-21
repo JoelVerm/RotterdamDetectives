@@ -27,7 +27,7 @@
                             @foreach(var conn in station.Connections)
                             {
                                 <div class="list-group-item d-flex">
-                                    <div class="col">@conn.Destination (@conn.ModeOfTransport)</div>
+                                    <div class="col">@conn.Name → @conn.Destination (@conn.ModeOfTransport)</div>
                                     <a class="btn btn-secondary col ms-2" href="/Admin/DisconnectStations?From=@station.Name&To=@conn.Destination">Delete</a>
                                 </div>
                             }

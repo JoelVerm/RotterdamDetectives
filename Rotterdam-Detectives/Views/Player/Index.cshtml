@@ -26,7 +26,7 @@
                     <div class="list-group-item @if (station.Station == Model.OwnStation) {<text>active</text>}">
                         <h4>@station.Station</h4>
                         <p>
-                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Destination} ({cs.ModeOfTransport})")).OrDefault("None")
+                            Connected to: @string.Join(", ", station.Connections.Select(cs => $"{cs.Name} → {cs.Destination} ({cs.ModeOfTransport})")).OrDefault("None")
                         </p>
                         <div class="list-group">
                             @foreach (var p in station.Players)
@@ -36,7 +36,7 @@
                         </div>
                         @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station))
                         {
-                            <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport</a>
+                            <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport (@conn.Name)</a>
                         }
                     </div>
                 }
