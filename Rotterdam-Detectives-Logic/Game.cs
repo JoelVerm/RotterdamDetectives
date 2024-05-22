@@ -37,6 +37,8 @@ namespace RotterdamDetectives_Logic
             string? gameMaster = db.GameMasterOf(player);
             if (gameMaster == null)
                 return Result.Err("Player is not in a game");
+            if (player == gameMaster)
+                return Result.Err("Player is the game master");
             db.RemovePlayer(gameMaster, player);
             return Result.Ok();
         }
