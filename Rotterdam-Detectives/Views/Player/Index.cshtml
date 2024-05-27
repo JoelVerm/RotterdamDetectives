@@ -39,7 +39,7 @@
                         </div>
                         @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station.Name))
                         {
-                            <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport (@conn.Name)</a>
+                            <a href="/Player/MoveStation?Station=@station.Station.Name&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport (@conn.Name)</a>
                         }
                     </div>
                 }
