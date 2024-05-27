@@ -47,6 +47,8 @@ namespace RotterdamDetectives_Logic
 
         public Result Register(string username, string password)
         {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                return Result.Err("Username or password is empty");
             string? existing = db.GetPasswordHash(username);
             if (existing != null)
                 return Result.Err("Username already exists");
