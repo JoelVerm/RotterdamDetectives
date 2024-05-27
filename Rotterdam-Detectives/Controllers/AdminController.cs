@@ -84,6 +84,24 @@ namespace RotterdamDetectives_Presentation.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult SetCoordsOfStation(string station, float lat, float lon)
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            admin.SetCoordinates(station, lat, lon);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult SetMapPosition(string station, int x, int y)
+        {
+            if (!LoggedIn())
+                return RedirectToAction("Login", "Home");
+            admin.SetMapPosition(station, x, y);
+            return RedirectToAction("Index");
+        }
+
         bool LoggedIn()
         {
             return Request.Cookies["Admin-Password"] == "TestAdmin";

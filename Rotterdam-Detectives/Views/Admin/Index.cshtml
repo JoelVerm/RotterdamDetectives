@@ -32,6 +32,19 @@
                                 </div>
                             }
                         </div>
+                        <form class="form row d-flex mt-2" method="post" action="/Admin/SetCoordsOfStation">
+                            <input class="col" type="text" name="station" value="@station.Name" hidden />
+                            <label class="col form-label" for="latitude">Latitude</label>
+                            <input class="col form-control" type="text" id="lat" name="lat" placeholder="Latitude" value="@station.Latitude" />
+                            <label class="col form-label" for="longitude">Longitude</label>
+                            <input class="col form-control" type="text" id="lon" name="lon" placeholder="Longitude" value="@station.Longitude" />
+                        </form>
+                        <form class="form row d-flex mt-2" method="post" action="/Admin/SetMapPosition">
+                            <input class="col" type="text" name="station" value="@station.Name" hidden />
+                            <label class="col form-label" for="x">Map position</label>
+                            <input class="col form-control" type="text" id="x" name="x" placeholder="MapX" value="@station.MapX" />
+                            <input class="col form-control" type="text" id="y" name="y" placeholder="MapY" value="@station.MapY" />
+                        </form>
                     </div>
                 }
             </div>

@@ -14,6 +14,8 @@ namespace RotterdamDetectives_LogicInterface
         public Result ConnectStations(string station1, string station2, string name, string modeOfTransport);
         public Result DisconnectStations(string station1, string station2);
         public Result DeleteStation(string station);
+        public void SetCoordinates(string station, double latitude, double longitude);
+        public void SetMapPosition(string station, int x, int y);
         public List<string> GetModesOfTransport();
     }
 }

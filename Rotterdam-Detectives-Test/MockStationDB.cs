@@ -29,6 +29,14 @@ namespace RotterdamDetectives_Test
 
         public List<IStationWithPlayers> GetWithPlayers(string username) => MockWithPlayers;
 
+        public (double latitude, double longitude) MockCoordinates { get; set; } = (0, 0);
+
+        public (double latitude, double longitude) GetCoordinatesOf(string station) => MockCoordinates;
+
+        public (int x, int y) MockMapPosition { get; set; } = (0, 0);
+
+        public (int x, int y) GetMapPositionOf(string station) => MockMapPosition;
+
         public void Add(string station) { }
 
         public void AddConnection(string from, string to, string name, string transportType) { }
@@ -37,7 +45,9 @@ namespace RotterdamDetectives_Test
 
         public void RemoveConnections(string from, string to) { }
 
-        public void SetCoordinatesOf(string station, int latitude, int longitude) {}
+        public void SetCoordinatesOf(string station, double latitude, double longitude) {}
+
+        public void SetMapPositionOf(string station, int x, int y) {}
     }
 
     internal class MockConnection : IConnection

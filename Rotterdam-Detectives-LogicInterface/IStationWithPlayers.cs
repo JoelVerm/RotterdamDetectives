@@ -9,8 +9,7 @@ namespace RotterdamDetectives_LogicInterface
 {
     public interface IStationWithPlayers
     {
-        string Station { get; }
+        IStationWithConnections Station { get; }
         IReadOnlyList<string> Players { get; }
-        IReadOnlyList<IConnection> Connections { get; }
     }
 }

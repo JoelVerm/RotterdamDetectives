@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace RotterdamDetectives_Logic
 {
-    internal record class StationWithPlayers(string Station, IReadOnlyList<string> Players, IReadOnlyList<IConnection> Connections) : IStationWithPlayers;
+    internal record class StationWithPlayers(IStationWithConnections Station, IReadOnlyList<string> Players) : IStationWithPlayers;
 }

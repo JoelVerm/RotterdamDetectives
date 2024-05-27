@@ -9,6 +9,10 @@ namespace RotterdamDetectives_LogicInterface
     public interface IStationWithConnections
     {
         public string Name { get; }
+        public double Latitude { get; }
+        public double Longitude { get; }
+        public int MapX { get; }
+        public int MapY { get; }
         public List<IConnection> Connections { get; }
     }
 }

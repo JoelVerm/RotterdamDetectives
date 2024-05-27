@@ -71,11 +71,34 @@ namespace RotterdamDetectives_Data
             db.Execute(db.LastQuery, new { From = station2Id, To = station1Id });
         }
 
-        public void SetCoordinatesOf(string station, int latitude, int longitude)
+        public void SetCoordinatesOf(string station, double latitude, double longitude)
         {
             db.Execute("UPDATE Stations SET Latitude = @Latitude, Longitude = @Longitude " +
                 "WHERE Name = @Station",
                 new { Latitude = latitude, Longitude = longitude, Station = station });
+        }
+
+        public (double latitude, double longitude) GetCoordinatesOf(string station)
+        {
+            return db.Row("SELECT Latitude, Longitude FROM Stations WHERE Name = @Station",
+                new { Station = station },
+                row => ((double)row["Latitude"], (double)row["Longitude"])
+            );
+        }
+
+        public void SetMapPositionOf(string station, int x, int y)
+        {
+            db.Execute("UPDATE Stations SET MapX = @X, MapY = @Y " +
+                "WHERE Name = @Station",
+                new { X = x, Y = y, Station = station });
+        }
+
+        public (int x, int y) GetMapPositionOf(string station)
+        {
+            return db.Row("SELECT MapX, MapY FROM Stations WHERE Name = @Station",
+                new { Station = station },
+                row => ((int)row["MapX"], (int)row["MapY"])
+            );
         }
 
         public List<IStationWithPlayers> GetWithPlayers(string username)

@@ -15,7 +15,10 @@ namespace RotterdamDetectives_DataInterface
         public IEnumerable<IConnection>? GetConnectionsFrom(string station);
         public void AddConnection(string from, string to, string name, string transportType);
         public void RemoveConnections(string from, string to);
-        public void SetCoordinatesOf(string station, int latitude, int longitude);
+        public void SetCoordinatesOf(string station, double latitude, double longitude);
+        public (double latitude, double longitude) GetCoordinatesOf(string station);
+        public void SetMapPositionOf(string station, int x, int y);
+        public (int x, int y) GetMapPositionOf(string station);
         public List<IStationWithPlayers> GetWithPlayers(string username);
         public List<string> GetModesOfTransport();
     }

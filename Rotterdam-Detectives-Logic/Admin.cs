@@ -24,14 +24,6 @@ namespace RotterdamDetectives_Logic
             return Result.Ok();
         }
 
-        public Result DeleteStation(string station)
-        {
-            if (!stationDB.Exists(station))
-                return Result.Err("Station does not exist.");
-            stationDB.Delete(station);
-            return Result.Ok();
-        }
-
         public Result DisconnectStations(string station1, string station2)
         {
             if (!stationDB.Exists(station1) || !stationDB.Exists(station2))
@@ -40,10 +32,31 @@ namespace RotterdamDetectives_Logic
             return Result.Ok();
         }
 
+        public Result DeleteStation(string station)
+        {
+            if (!stationDB.Exists(station))
+                return Result.Err("Station does not exist.");
+            stationDB.Delete(station);
+            return Result.Ok();
+        }
+
+        public void SetCoordinates(string station, double latitude, double longitude)
+        {
+            stationDB.SetCoordinatesOf(station, latitude, longitude);
+        }
+
+        public void SetMapPosition(string station, int x, int y)
+        {
+            stationDB.SetMapPositionOf(station, x, y);
+        }
+
         public List<IStationWithConnections> GetStations()
         {
             return stationDB.GetStations()
-                .Select(s => new StationWithConnections(s, stationDB.GetConnectionsFrom(s)
+                .Select(s => new StationWithConnections(s,
+                    stationDB.GetCoordinatesOf(s),
+                    stationDB.GetMapPositionOf(s),
+                    stationDB.GetConnectionsFrom(s)
                     ?.Select(c => new Connection(c))
                     .ToList<RotterdamDetectives_LogicInterface.IConnection>() ?? [])).ToList<IStationWithConnections>();
         }

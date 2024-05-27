@@ -23,10 +23,10 @@
             <div class="list-group">
                 @foreach (var station in Model.Stations)
                 {
-                    <div class="list-group-item @if (station.Station == Model.OwnStation) {<text>active</text>}">
+                    <div class="list-group-item @if (station.Station.Name == Model.OwnStation) {<text>active</text>}">
                         <h4>@station.Station</h4>
                         <div>
-                            @foreach (var conn in station.Connections)
+                            @foreach (var conn in station.Station.Connections)
 							{
 								<p class="m-0">@conn.Name → @conn.Destination (@conn.ModeOfTransport)</p>
 							}
@@ -37,7 +37,7 @@
                                 <div class="list-group-item">@p</div>
                             }
                         </div>
-                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station))
+                        @foreach (var conn in Model.ConnectedStations.ToList().FindAll(cs => cs.Destination == station.Station.Name))
                         {
                             <a href="/Player/MoveStation?Station=@station.Station&TransportType=@conn.ModeOfTransport" class="btn btn-primary mt-1">Move here by @conn.ModeOfTransport (@conn.Name)</a>
                         }

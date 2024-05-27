@@ -11,34 +11,22 @@ namespace RotterdamDetectives_Logic
 {
     public class Station(IStationDB db) : IStation
     {
-        public IReadOnlyList<RotterdamDetectives_LogicInterface.IConnection> GetConnectionsOf(string station)
+        public List<RotterdamDetectives_LogicInterface.IConnection> GetConnectionsOf(string station)
         {
-            return db.GetConnectionsFrom(station)?.Select(c => new Connection(c)).ToList() ?? [];
-        }
-
-        public Result AddConnection(string from, string to, string name, string modeOfTransport)
-        {
-            if (db.GetConnectionsFrom(from)?.Any(c => c.Destination == to) ?? false)
-                return Result.Err("Connection already exists");
-            db.AddConnection(from, to, name, modeOfTransport);
-            return Result.Ok();
-        }
-
-        public void RemoveConnections(string from, string to)
-        {
-            db.RemoveConnections(from, to);
-        }
-
-        public void SetCoordinates(string station, int latitude, int longitude)
-        {
-            db.SetCoordinatesOf(station, latitude, longitude);
+            return db.GetConnectionsFrom(station)?.Select(c => new Connection(c)).ToList<RotterdamDetectives_LogicInterface.IConnection>() ?? [];
         }
 
         public List<RotterdamDetectives_LogicInterface.IStationWithPlayers> GetWithPlayers(string username)
         {
             return db.GetWithPlayers(username)
-                .Select(s => new StationWithPlayers(s.Station, s.Players,
-                    db.GetConnectionsFrom(s.Station)?.Select(c => new Connection(c)).ToList() ?? []
+                .Select(s => new StationWithPlayers(
+                    new StationWithConnections(
+                        s.Station,
+                        db.GetCoordinatesOf(s.Station),
+                        db.GetMapPositionOf(s.Station),
+                        GetConnectionsOf(s.Station)
+                    ),
+                    s.Players
                 ))
                 .ToList<RotterdamDetectives_LogicInterface.IStationWithPlayers>();
         }
