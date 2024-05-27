@@ -24,7 +24,7 @@
                 @foreach (var station in Model.Stations)
                 {
                     <div class="list-group-item @if (station.Station.Name == Model.OwnStation) {<text>active</text>}">
-                        <h4>@station.Station</h4>
+                        <h4>@station.Station.Name</h4>
                         <div>
                             @foreach (var conn in station.Station.Connections)
 							{
