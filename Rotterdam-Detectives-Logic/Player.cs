@@ -54,7 +54,10 @@ namespace RotterdamDetectives_Logic
                 return Result.Err("Username already exists");
             string hash = pw.HashPassword(username, password);
             db.Register(username, hash);
-            db.SetCurrentStation(username, stations.RandomStation());
+            var station = stations.RandomStation();
+            if (station == null)
+                return Result.Err("No stations available");
+            db.SetCurrentStation(username, station);
             return Result.Ok();
         }
 
