@@ -6,12 +6,14 @@ namespace RotterdamDetectives_Data
 {
     internal class DB(string connectionString)
     {
-        readonly SqlConnection db = new(connectionString);
-
         public string LastQuery { get; private set; } = "";
-        public string LastError { get; private set; } = "";
+        private string lastError = "";
+        public string LastError {
+            get { return lastError; }
+            private set { lastError = value; Debug.WriteLine($"DB ERROR: {value}"); }
+        }
 
-        SqlCommand ConstructCommand(string query, object @params)
+        SqlCommand ConstructCommand(SqlConnection db, string query, object @params)
         {
             LastQuery = query;
             SqlCommand cmd = new(query, db);
@@ -24,12 +26,12 @@ namespace RotterdamDetectives_Data
 
         public bool Execute(string query, object @params)
         {
-            SqlCommand cmd = ConstructCommand(query, @params);
+            using SqlConnection db = new(connectionString);
+            db.Open();
+            SqlCommand cmd = ConstructCommand(db, query, @params);
             try
             {
-                db.Open();
                 cmd.ExecuteNonQuery();
-                db.Close();
                 return true;
             }
             catch (SqlException e)
@@ -37,21 +39,17 @@ namespace RotterdamDetectives_Data
                 LastError = e.Message;
                 return false;
             }
-            finally
-            {
-                db.Close();
-            }
         }
 
         public Out? Field<Out>(string query, object @params)
             where Out: struct
         {
-            var cmd = ConstructCommand(query, @params);
+            using SqlConnection db = new(connectionString);
+            db.Open();
+            var cmd = ConstructCommand(db, query, @params);
             try
             {
-                db.Open();
                 var res = cmd.ExecuteScalar();
-                db.Close();
                 if (res is DBNull)
                     return null;
                 if (res == null)
@@ -63,20 +61,16 @@ namespace RotterdamDetectives_Data
                 LastError = e.Message;
                 return null;
             }
-            finally
-            {
-                db.Close();
-            }
         }
 
         public string? String(string query, object @params)
         {
-            var cmd = ConstructCommand(query, @params);
+            using SqlConnection db = new(connectionString);
+            db.Open();
+            var cmd = ConstructCommand(db, query, @params);
             try
             {
-                db.Open();
                 var res = cmd.ExecuteScalar();
-                db.Close();
                 if (res is DBNull)
                     return null;
                 if (res == null)
@@ -88,23 +82,19 @@ namespace RotterdamDetectives_Data
                 LastError = e.Message;
                 return null;
             }
-            finally
-            {
-                db.Close();
-            }
         }
 
         public Out? Row<Out>(string query, object @params, Func<DbDataRecord, Out> read)
         {
-            SqlCommand cmd = ConstructCommand(query, @params);
+            using SqlConnection db = new(connectionString);
+            db.Open();
+            SqlCommand cmd = ConstructCommand(db, query, @params);
             try
             {
-                db.Open();
                 using SqlDataReader reader = cmd.ExecuteReader();
                 foreach (DbDataRecord item in reader)
                 {
                     var r = read(item);
-                    db.Close();
                     return r;
                 }
                 return default;
@@ -114,18 +104,15 @@ namespace RotterdamDetectives_Data
                 LastError = e.Message;
                 return default;
             }
-            finally
-            {
-                db.Close();
-            }
         }
 
         public IEnumerable<Out>? Rows<Out>(string query, object @params, Func<DbDataRecord, Out?> read)
         {
-            SqlCommand cmd = ConstructCommand(query, @params);
+            using SqlConnection db = new(connectionString);
+            db.Open();
+            SqlCommand cmd = ConstructCommand(db, query, @params);
             try
             {
-                db.Open();
                 using SqlDataReader reader = cmd.ExecuteReader();
                 List<Out> list = [];
                 foreach (DbDataRecord item in reader)
@@ -134,17 +121,12 @@ namespace RotterdamDetectives_Data
                     if (obj != null)
                         list.Add(obj);
                 }
-                db.Close();
                 return list;
             }
             catch (SqlException e)
             {
                 LastError = e.Message;
                 return null;
-            }
-            finally
-            {
-                db.Close();
             }
         }
     }

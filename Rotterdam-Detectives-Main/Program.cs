@@ -3,7 +3,7 @@ using RotterdamDetectives_Data;
 using RotterdamDetectives_Logic;
 using RotterdamDetectives_Main;
 
-var connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=RotterdamDetectives;Integrated Security=True;";
+var connectionString = File.ReadAllText("ConnectionString.txt");
 
 var gameDB = new GameDB(connectionString);
 var playerDB = new PlayerDB(connectionString);
